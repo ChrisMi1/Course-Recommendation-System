@@ -1,6 +1,8 @@
-CREATE SCHEMA IF NOT EXISTS course_recommendation;
+DROP SCHEMA IF EXISTS `course_recommendation`;
 
-USE course_recommendation; 
+CREATE SCHEMA IF NOT EXISTS `course_recommendation`;
+
+USE `course_recommendation`; 
 
 CREATE TABLE `courses` (
 	`id` INT NOT NULL AUTO_INCREMENT,
@@ -8,13 +10,23 @@ CREATE TABLE `courses` (
     `code` NVARCHAR(50) NOT NULL,
     `description` MEDIUMTEXT NOT NULL,
     `embedding` MEDIUMTEXT NOT NULL,
-    PRIMARY KEY(`id`)
+	`inserted_at` datetime NOT NULL DEFAULT current_timestamp(),
+	`inserted_by` varchar(100) NOT NULL DEFAULT 'system',
+	`madified_at` datetime NOT NULL DEFAULT current_timestamp(),
+	`modified_by` varchar(100) DEFAULT NULL,
+	`row_version` decimal(22,0) NOT NULL DEFAULT 1,
+	PRIMARY KEY(`id`)
 )ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE `questions` ( 
 	`id` INT NOT NULL AUTO_INCREMENT,
     `question` VARCHAR(1000) NOT NULL, 
     `options` VARCHAR(1000) NOT NULL, 
+	`inserted_at` datetime NOT NULL DEFAULT current_timestamp(),
+	`inserted_by` varchar(100) NOT NULL DEFAULT 'system',
+	`madified_at` datetime NOT NULL DEFAULT current_timestamp(),
+	`modified_by` varchar(100) DEFAULT NULL,
+	`row_version` decimal(22,0) NOT NULL DEFAULT 1,
     PRIMARY KEY(`id`)
 )ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -24,6 +36,11 @@ CREATE TABLE `question_rules` (
     `answer_value` VARCHAR(400) NOT NULL, 
     `next_question_id` INT,
     `question_sequence` INT,
+	`inserted_at` datetime NOT NULL DEFAULT current_timestamp(),
+	`inserted_by` varchar(100) NOT NULL DEFAULT 'system',
+	`madified_at` datetime NOT NULL DEFAULT current_timestamp(),
+	`modified_by` varchar(100) DEFAULT NULL,
+	`row_version` decimal(22,0) NOT NULL DEFAULT 1,
     PRIMARY KEY(`id`),
     FOREIGN KEY(`question_id`) REFERENCES `questions`(`id`) ON DELETE CASCADE
 )ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
