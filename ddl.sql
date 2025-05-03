@@ -12,7 +12,7 @@ CREATE TABLE `courses` (
     `embedding` MEDIUMTEXT NOT NULL,
 	`inserted_at` datetime NOT NULL DEFAULT current_timestamp(),
 	`inserted_by` varchar(100) NOT NULL DEFAULT 'system',
-	`madified_at` datetime NOT NULL DEFAULT current_timestamp(),
+	`modified_at` datetime NOT NULL DEFAULT current_timestamp(),
 	`modified_by` varchar(100) DEFAULT NULL,
 	`row_version` decimal(22,0) NOT NULL DEFAULT 1,
 	PRIMARY KEY(`id`)
@@ -24,7 +24,7 @@ CREATE TABLE `questions` (
     `options` VARCHAR(1000) NOT NULL, 
 	`inserted_at` datetime NOT NULL DEFAULT current_timestamp(),
 	`inserted_by` varchar(100) NOT NULL DEFAULT 'system',
-	`madified_at` datetime NOT NULL DEFAULT current_timestamp(),
+	`modified_at` datetime NOT NULL DEFAULT current_timestamp(),
 	`modified_by` varchar(100) DEFAULT NULL,
 	`row_version` decimal(22,0) NOT NULL DEFAULT 1,
     PRIMARY KEY(`id`)
@@ -33,12 +33,12 @@ CREATE TABLE `questions` (
 CREATE TABLE `question_rules` (
 	`id` INT NOT NULL AUTO_INCREMENT,
     `question_id` INT NOT NULL, 
-    `answer_value` VARCHAR(400) NOT NULL, 
+    `answer_value` VARCHAR(400), 
     `next_question_id` INT,
     `question_sequence` INT,
 	`inserted_at` datetime NOT NULL DEFAULT current_timestamp(),
 	`inserted_by` varchar(100) NOT NULL DEFAULT 'system',
-	`madified_at` datetime NOT NULL DEFAULT current_timestamp(),
+	`modified_at` datetime NOT NULL DEFAULT current_timestamp(),
 	`modified_by` varchar(100) DEFAULT NULL,
 	`row_version` decimal(22,0) NOT NULL DEFAULT 1,
     PRIMARY KEY(`id`),
@@ -98,7 +98,7 @@ INSERT INTO `questions` (`question`,`options`) VALUES ('Πώς θα αξιολο
 INSERT INTO `questions` (`question`,`options`) VALUES ('Ποια είναι η εξοικείωσή σας με τις πιθανότητες και τα στατιστικά;','Αρχάριος,Βασικό,Ενδιάμεσος,Προχωρημένος,Ειδικός') ;
 INSERT INTO `questions` (`question`,`options`) VALUES ('Πώς θα αξιολογούσατε τις γνώσεις σας για ψηφιακά και αναλογικά συστήματα, συμπεριλαμβανομένων των μεθόδων μετατροπής σήματος και δειγματοληψίας;','Αρχάριος,Βασικό,Ενδιάμεσος,Προχωρημένος,Ειδικός') ;
 
-
+INSERT INTO `question_rules` (`question_id`,`question_sequence`) VALUES (1,0); 
 INSERT INTO `question_rules` (`question_id`,`answer_value`,`next_question_id`) VALUES (1,'Λογισμικό και Πληροφοριακά Συστήματα',2); 
 INSERT INTO `question_rules` (`question_id`,`answer_value`,`next_question_id`,`question_sequence`) VALUES (2,'Άναπτυξη διαδικτυακών εφαρμογών',3,10); 
 INSERT INTO `question_rules` (`question_id`,`answer_value`,`next_question_id`,`question_sequence`) VALUES (2,'Άναπτυξη διαδικτυακών εφαρμογών',4,20); 

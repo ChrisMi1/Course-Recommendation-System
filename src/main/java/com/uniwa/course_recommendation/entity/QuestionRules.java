@@ -27,7 +27,7 @@ public class QuestionRules extends AuditableDbEntity{
     private Long nextQuestion;
 
     @Column(name = "question_sequence")
-    private Integer question_sequence;
+    private Integer questionSequence;
 
     @Override
     public Long getUniqueID() {

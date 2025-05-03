@@ -9,7 +9,5 @@ public abstract class DbEntity {
     public String getSimpleLabel() {
         return String.valueOf(getUniqueID());
     }
-    public String getDetailedLabel() {
-        return getUniqueID() + " - " + getSimpleLabel();
-    }
+
 }
