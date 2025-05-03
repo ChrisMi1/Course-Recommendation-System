@@ -1,6 +1,6 @@
 package com.uniwa.course_recommendation.entity;
 
-import com.uniwa.course_recommendation.dto.FirstQuestionsDto;
+import com.uniwa.course_recommendation.dto.QuestionDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -37,9 +37,9 @@ public class Question extends AuditableDbEntity{
         return "Question";
     }
 
-    public FirstQuestionsDto updateFirstQuestionDto(Question question) {
+    public static QuestionDto updateFirstQuestionDto(Question question) {
 
-        return FirstQuestionsDto.builder()
+        return QuestionDto.builder()
                 .id(question.getId())
                 .question(question.getQuestion())
                 .options(new ArrayList<>(List.of(question.getOptions().split(","))))

@@ -6,6 +6,8 @@ import jakarta.persistence.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 public abstract class AbstractRepository<T extends DbEntity> {
     Logger logger = LoggerFactory.getLogger(AbstractRepository.class);
 
@@ -53,6 +55,16 @@ public abstract class AbstractRepository<T extends DbEntity> {
     public Object jpqlQuerySingleResult(String query) {
         Query jpqlQuery = entityManager.createQuery(query);
         return jpqlQuery.getSingleResult();
+    }
+
+    public <X extends DbEntity> List<X> jpqlQuery(String query,Class<X> type) {
+        TypedQuery<X> jpqlQuery = entityManager.createQuery(query,type);
+        return jpqlQuery.getResultList();
+    }
+    @SuppressWarnings("unchecked")
+    public <X extends DbEntity> List<X> nativeQuery(String query,Class<X> type) {
+        Query jpqlQuery = entityManager.createNativeQuery(query,type);
+        return jpqlQuery.getResultList();
     }
 
 
