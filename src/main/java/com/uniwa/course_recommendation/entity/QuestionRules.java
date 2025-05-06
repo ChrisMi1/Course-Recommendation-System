@@ -1,5 +1,6 @@
 package com.uniwa.course_recommendation.entity;
 
+import com.uniwa.course_recommendation.dto.AnswerDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,6 +11,14 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 @Setter
+@SqlResultSetMapping(name = "QuestionRulesMapping",
+        classes = @ConstructorResult(
+                targetClass = AnswerDto.class,
+                columns = {
+                        @ColumnResult(name = "question_id", type = Long.class),
+                        @ColumnResult(name = "answer_value", type = String.class),
+                        @ColumnResult(name = "next_question_id", type = String.class)
+                }))
 public class QuestionRules extends AuditableDbEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

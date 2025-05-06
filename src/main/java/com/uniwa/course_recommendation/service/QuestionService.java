@@ -20,18 +20,9 @@ public class QuestionService {
     @Autowired
     QuestionRepository questionRepository;
 
-    public QuestionDto getFirstQuestion() {
-        logger.info("Retrieving first question...");
-        Question question = questionRepository.getFirstQuestion();
-        return Question.updateFirstQuestionDto(question);
-    }
-
-    public List<QuestionDto> getNextQuestions(AnswerDto answerDto) {
-        logger.info("Retrieving next questions...");
-        List<Question> questions = questionRepository.getNextQuestions(answerDto.getAnswer());
-        List<QuestionDto> questionsDto = new ArrayList<>();
-        questions.forEach(question -> questionsDto.add(Question.updateFirstQuestionDto(question)));
-        return questionsDto;
+    public List<QuestionDto> findAllQuestions() {
+        logger.info("Retrieving all questions with answers");
+        return questionRepository.getAllQuestionsWithAnswers();
     }
 
 

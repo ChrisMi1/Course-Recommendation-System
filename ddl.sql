@@ -58,6 +58,7 @@ IGNORE 1 LINES
 INSERT INTO `questions` (`question`,`options`) VALUES ('Σε ποια ροή εξειδίκευσης θέλετε να εστιάσετε; ','Λογισμικό και Πληροφοριακά Συστήματα,Συστήματα Ροής Υλικών και Υπολογιστών,Δίκτυο Υπολογιστών και Επικοινωνιών') ;
 INSERT INTO `questions` (`question`,`options`) VALUES ('Για ποιο είδος ανάπτυξης λογισμικού σας ενδιαφέρει περισσότερο;','Άναπτυξη διαδικτυακών εφαρμογών,Ανάπτυξη παιχνιδιών,Ανάπτυξη κινητών εφαρμογών,Τεχνητή νοημοσύνη και μηχανική μάθηση ,Επιστήμη Δεδομένων') ;
 INSERT INTO `questions` (`question`,`options`) VALUES ('Πώς θα βαθμολογούσατε την επάρκειά σας σε γλώσσες προγραμματισμού που χρησιμοποιούνται συνήθως στην ανάπτυξη διαδικτυακών εφαρμογών;','Αρχάριος,Βασικό,Ενδιάμεσος,Προχωρημένος,Ειδικός') ;
+INSERT INTO `questions` (`question`,`options`) VALUES ('Πόσο εξοικειωμένοι είστε με τις έννοιες της SQL και της βάσης δεδομένων;','Αρχάριος,Βασικό,Ενδιάμεσος,Προχωρημένος,Ειδικός') ;
 INSERT INTO `questions` (`question`,`options`) VALUES ('Πόσο εξοικειωμένοι είστε με το σχεδιασμό και την ανάλυση αλγορίθμων;','Αρχάριος,Βασικό,Ενδιάμεσος,Προχωρημένος,Ειδικός') ;
 INSERT INTO `questions` (`question`,`options`) VALUES ('Πώς θα βαθμολογούσατε την κατανόησή σας για τα μαθηματικά που χρησιμοποιούνται συνήθως στην ανάπτυξη παιχνιδιών (π.χ. διανύσματα, πίνακες, γραμμική άλγεβρα); ','Αρχάριος,Βασικό,Ενδιάμεσος,Προχωρημένος,Ειδικός') ;
 INSERT INTO `questions` (`question`,`options`) VALUES ('Πώς θα βαθμολογούσατε την επάρκειά σας σε γλώσσες προγραμματισμού για κινητά (π.χ. Java/Kotlin για Android, Swift για iOS);','Αρχάριος,Βασικό,Ενδιάμεσος,Προχωρημένος,Ειδικός') ;
@@ -98,7 +99,7 @@ INSERT INTO `questions` (`question`,`options`) VALUES ('Πώς θα αξιολο
 INSERT INTO `questions` (`question`,`options`) VALUES ('Ποια είναι η εξοικείωσή σας με τις πιθανότητες και τα στατιστικά;','Αρχάριος,Βασικό,Ενδιάμεσος,Προχωρημένος,Ειδικός') ;
 INSERT INTO `questions` (`question`,`options`) VALUES ('Πώς θα αξιολογούσατε τις γνώσεις σας για ψηφιακά και αναλογικά συστήματα, συμπεριλαμβανομένων των μεθόδων μετατροπής σήματος και δειγματοληψίας;','Αρχάριος,Βασικό,Ενδιάμεσος,Προχωρημένος,Ειδικός') ;
 
-INSERT INTO `question_rules` (`question_id`,`question_sequence`) VALUES (1,0); 
+
 INSERT INTO `question_rules` (`question_id`,`answer_value`,`next_question_id`) VALUES (1,'Λογισμικό και Πληροφοριακά Συστήματα',2); 
 INSERT INTO `question_rules` (`question_id`,`answer_value`,`next_question_id`,`question_sequence`) VALUES (2,'Άναπτυξη διαδικτυακών εφαρμογών',3,10); 
 INSERT INTO `question_rules` (`question_id`,`answer_value`,`next_question_id`,`question_sequence`) VALUES (2,'Άναπτυξη διαδικτυακών εφαρμογών',4,20); 
@@ -141,6 +142,11 @@ INSERT INTO `question_rules` (`question_id`,`answer_value`,`next_question_id`,`q
 INSERT INTO `question_rules` (`question_id`,`answer_value`,`next_question_id`,`question_sequence`) VALUES (24,'Τηλεπικοινωνίες',41,30);
 INSERT INTO `question_rules` (`question_id`,`answer_value`,`next_question_id`,`question_sequence`) VALUES (24,'Τηλεπικοινωνίες',42,40);
 INSERT INTO `question_rules` (`question_id`,`answer_value`,`next_question_id`,`question_sequence`) VALUES (24,'Τηλεπικοινωνίες',43,50);
+
+
+
+
+
 
 
 

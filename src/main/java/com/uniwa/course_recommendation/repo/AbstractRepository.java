@@ -3,10 +3,11 @@ package com.uniwa.course_recommendation.repo;
 import com.uniwa.course_recommendation.entity.DbEntity;
 import com.uniwa.course_recommendation.entity.Question;
 import jakarta.persistence.*;
+import org.apache.tomcat.util.buf.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
+import java.util.*;
 
 public abstract class AbstractRepository<T extends DbEntity> {
     Logger logger = LoggerFactory.getLogger(AbstractRepository.class);
@@ -66,6 +67,57 @@ public abstract class AbstractRepository<T extends DbEntity> {
         Query jpqlQuery = entityManager.createNativeQuery(query,type);
         return jpqlQuery.getResultList();
     }
+    /**
+     * Execute a native query.
+     * @param query to be executed
+     * @param resultSetMappingName of the mapped object that the returning list contains
+     * @param parameters of query
+     * @return list of objects defined by resultSetMappingName
+     */
+    @SuppressWarnings("unchecked")
+    public <X> List<X> executeNativeQuery(String query, String resultSetMappingName, Map<String, Object> parameters) {
+        TypedQuery<X> nativeQuery;
+
+        List<Object> paramsList = new ArrayList<>(parameters.entrySet().size());
+        query = replaceQueryParamsAndReturnNewQuery(query, parameters, paramsList);
+        nativeQuery =  (TypedQuery<X>) entityManager.createNativeQuery(query, resultSetMappingName);
+
+        fillQueryWithParams(nativeQuery, paramsList);
+
+        return nativeQuery.getResultList();
+    }
+
+    private String replaceQueryParamsAndReturnNewQuery(String query, Map<String, Object> namedOrNumberedParameters, List<Object> paramsList) {
+        Map <String, Object> parameters;
+
+        if (query.contains("?1")) {
+
+            // In case of numbered parameters, i.e. ?1, ?2, etc. do not touch the query, just update the parameters list in an ordered way
+            parameters = new TreeMap<>(Comparator.comparingInt(Integer::parseInt));
+            parameters.putAll(namedOrNumberedParameters);
+            for (Map.Entry<String, Object> parameter : parameters.entrySet()) {
+                paramsList.add(parameter.getValue());
+            }
+        } else {
+
+            // In case of named parameters, replace the :key with ?1, ?2, etc. and update the parameters list
+            parameters = namedOrNumberedParameters;
+            int parameterCounter = 1;
+            for (Map.Entry<String, Object> parameter : parameters.entrySet()) {
+                query = query.replaceAll(StringUtils.join(":", parameter.getKey()), StringUtils.join("?", String.valueOf(parameterCounter++)));
+                paramsList.add(parameter.getValue());
+            }
+        }
+
+        return query;
+    }
+    private void fillQueryWithParams(Query q, List<Object> parameters) {
+        int i = 1;
+        for (Object obj : parameters) {
+            q.setParameter(i++, obj);
+        }
+    }
+
 
 
 }

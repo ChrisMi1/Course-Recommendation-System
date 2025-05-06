@@ -1,5 +1,6 @@
 package com.uniwa.course_recommendation.entity;
 
+import com.uniwa.course_recommendation.dto.AnswerDto;
 import com.uniwa.course_recommendation.dto.QuestionDto;
 import jakarta.persistence.*;
 import lombok.*;
@@ -14,6 +15,14 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
+@SqlResultSetMapping(name = "QuestionMapping",
+        classes = @ConstructorResult(
+                targetClass = QuestionDto.class,
+                columns = {
+                        @ColumnResult(name = "id", type = Long.class),
+                        @ColumnResult(name = "question", type = String.class),
+                        @ColumnResult(name = "options", type = String.class)
+                }))
 public class Question extends AuditableDbEntity{
 
     @Id
@@ -37,12 +46,5 @@ public class Question extends AuditableDbEntity{
         return "Question";
     }
 
-    public static QuestionDto updateFirstQuestionDto(Question question) {
 
-        return QuestionDto.builder()
-                .id(question.getId())
-                .question(question.getQuestion())
-                .options(new ArrayList<>(List.of(question.getOptions().split(","))))
-                .build();
-    }
 }
