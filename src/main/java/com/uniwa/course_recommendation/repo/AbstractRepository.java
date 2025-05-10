@@ -1,7 +1,6 @@
 package com.uniwa.course_recommendation.repo;
 
 import com.uniwa.course_recommendation.entity.DbEntity;
-import com.uniwa.course_recommendation.entity.Question;
 import jakarta.persistence.*;
 import org.apache.tomcat.util.buf.StringUtils;
 import org.slf4j.Logger;

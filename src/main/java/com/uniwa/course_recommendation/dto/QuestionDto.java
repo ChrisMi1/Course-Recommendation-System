@@ -13,7 +13,7 @@ import java.util.List;
 public class QuestionDto {
    private Long id;
    private String question;
-   private List<AnswerDto> answers;
+   private List<QuestionRulesDto> answers;
    @JsonIgnore
    private String options;
 }

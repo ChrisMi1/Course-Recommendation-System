@@ -1,12 +1,8 @@
 package com.uniwa.course_recommendation.entity;
 
-import com.uniwa.course_recommendation.dto.AnswerDto;
 import com.uniwa.course_recommendation.dto.QuestionDto;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "questions")

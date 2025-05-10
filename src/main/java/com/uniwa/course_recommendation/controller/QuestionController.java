@@ -18,7 +18,7 @@ public class QuestionController {
 
     @GetMapping("/questions")
     public ResponseEntity<List<QuestionDto>> findAllQuestions() {
-        return new ResponseEntity<>(questionService.findAllQuestions(),HttpStatus.OK);
+        return new ResponseEntity<>(questionService.findAllQuestionsWithQuestionRules(),HttpStatus.OK);
     }
 
 

@@ -1,8 +1,7 @@
 package com.uniwa.course_recommendation.service;
 
-import com.uniwa.course_recommendation.dto.AnswerDto;
 import com.uniwa.course_recommendation.dto.QuestionDto;
-import com.uniwa.course_recommendation.entity.Question;
+import com.uniwa.course_recommendation.dto.QuestionRulesDto;
 import com.uniwa.course_recommendation.repo.AbstractRepository;
 import com.uniwa.course_recommendation.repo.QuestionRepository;
 import org.slf4j.Logger;
@@ -12,6 +11,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class QuestionService {
@@ -20,9 +21,31 @@ public class QuestionService {
     @Autowired
     QuestionRepository questionRepository;
 
-    public List<QuestionDto> findAllQuestions() {
+    public List<QuestionDto> findAllQuestionsWithQuestionRules() {
         logger.info("Retrieving all questions with answers");
-        return questionRepository.getAllQuestionsWithAnswers();
+        List<QuestionRulesDto> questionRules = questionRepository.getAllQuestionsWithAnswers();
+        List<QuestionDto> questions = questionRepository.getAllQuestions();
+        questions.forEach(questionDto ->
+        {
+            questionDto.setAnswers(questionRules.stream().filter(ruleDto -> Objects.equals(ruleDto.getId(), questionDto.getId()))
+                    .collect(Collectors.toList()));
+            if (questionDto.getAnswers().isEmpty()) {
+                List<String> options = new ArrayList<>(List.of(questionDto.getOptions().split(",")));
+                List<QuestionRulesDto> answersDto = new ArrayList<>();
+                options.forEach(option ->
+                        {
+                            answersDto.add(QuestionRulesDto.builder()
+                                    .id(questionDto.getId())
+                                    .answer(option)
+                                    .build());
+
+                        }
+                );
+                questionDto.setAnswers(answersDto);
+            }
+
+        });
+        return questions;
     }
 
 

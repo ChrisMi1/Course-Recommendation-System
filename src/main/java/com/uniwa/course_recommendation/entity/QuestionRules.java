@@ -1,6 +1,6 @@
 package com.uniwa.course_recommendation.entity;
 
-import com.uniwa.course_recommendation.dto.AnswerDto;
+import com.uniwa.course_recommendation.dto.QuestionRulesDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,7 +13,7 @@ import lombok.*;
 @Setter
 @SqlResultSetMapping(name = "QuestionRulesMapping",
         classes = @ConstructorResult(
-                targetClass = AnswerDto.class,
+                targetClass = QuestionRulesDto.class,
                 columns = {
                         @ColumnResult(name = "question_id", type = Long.class),
                         @ColumnResult(name = "answer_value", type = String.class),

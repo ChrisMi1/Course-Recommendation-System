@@ -7,7 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 @Setter
-public class AnswerDto {
+public class QuestionRulesDto {
     private Long id;
     private String answer;
     private String nextQuestionId;
