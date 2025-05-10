@@ -45,7 +45,6 @@ CREATE TABLE `question_rules` (
     FOREIGN KEY(`question_id`) REFERENCES `questions`(`id`) ON DELETE CASCADE
 )ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-
 GRANT FILE ON *.* TO 'root'@'localhost';
 SET GLOBAL local_infile=1;
 load data local infile "C:\\Users\\xrist\\Downloads\\courses_data.csv" INTO TABLE course_recommendation.courses
@@ -142,6 +141,7 @@ INSERT INTO `question_rules` (`question_id`,`answer_value`,`next_question_id`,`q
 INSERT INTO `question_rules` (`question_id`,`answer_value`,`next_question_id`,`question_sequence`) VALUES (24,'Τηλεπικοινωνίες',41,30);
 INSERT INTO `question_rules` (`question_id`,`answer_value`,`next_question_id`,`question_sequence`) VALUES (24,'Τηλεπικοινωνίες',42,40);
 INSERT INTO `question_rules` (`question_id`,`answer_value`,`next_question_id`,`question_sequence`) VALUES (24,'Τηλεπικοινωνίες',43,50);
+
 
 
 

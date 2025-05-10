@@ -2,6 +2,7 @@ package com.uniwa.course_recommendation.controller;
 
 import com.uniwa.course_recommendation.dto.QuestionDto;
 import com.uniwa.course_recommendation.service.QuestionService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ public class QuestionController {
     QuestionService questionService;
 
     @GetMapping("/questions")
-    public ResponseEntity<List<QuestionDto>> findAllQuestions() {
+    public ResponseEntity<List<QuestionDto>> findAllQuestions(HttpSession httpSession) {
         return new ResponseEntity<>(questionService.findAllQuestionsWithQuestionRules(),HttpStatus.OK);
     }
 
