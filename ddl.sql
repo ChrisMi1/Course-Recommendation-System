@@ -45,6 +45,21 @@ CREATE TABLE `question_rules` (
     FOREIGN KEY(`question_id`) REFERENCES `questions`(`id`) ON DELETE CASCADE
 )ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+CREATE TABLE `user_answers` (
+	`id` INT NOT NULL AUTO_INCREMENT,
+    `session_id` VARCHAR(150) NOT NULL,
+    `track_id` VARCHAR(36) NOT NULL,
+    `question_id` INT NOT NULL, 
+    `answer` VARCHAR(400),
+    `inserted_at` datetime NOT NULL DEFAULT current_timestamp(),
+	`inserted_by` varchar(100) NOT NULL DEFAULT 'system',
+	`modified_at` datetime NOT NULL DEFAULT current_timestamp(),
+	`modified_by` varchar(100) DEFAULT NULL,
+	`row_version` decimal(22,0) NOT NULL DEFAULT 1,
+	PRIMARY KEY(`id`),
+    FOREIGN KEY(`question_id`) REFERENCES `questions`(`id`) 
+)ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 GRANT FILE ON *.* TO 'root'@'localhost';
 SET GLOBAL local_infile=1;
 load data local infile "C:\\Users\\xrist\\Downloads\\courses_data.csv" INTO TABLE course_recommendation.courses
@@ -52,7 +67,6 @@ FIELDS TERMINATED BY ';'
 LINES TERMINATED BY '\n'
 IGNORE 1 LINES
 (`name`,`code`,`description`) ; 
-
 
 INSERT INTO `questions` (`question`,`options`) VALUES ('Σε ποια ροή εξειδίκευσης θέλετε να εστιάσετε; ','Λογισμικό και Πληροφοριακά Συστήματα,Συστήματα Ροής Υλικών και Υπολογιστών,Δίκτυο Υπολογιστών και Επικοινωνιών') ;
 INSERT INTO `questions` (`question`,`options`) VALUES ('Για ποιο είδος ανάπτυξης λογισμικού σας ενδιαφέρει περισσότερο;','Άναπτυξη διαδικτυακών εφαρμογών,Ανάπτυξη παιχνιδιών,Ανάπτυξη κινητών εφαρμογών,Τεχνητή νοημοσύνη και μηχανική μάθηση ,Επιστήμη Δεδομένων') ;

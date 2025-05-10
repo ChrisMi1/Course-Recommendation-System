@@ -1,17 +1,23 @@
 package com.uniwa.course_recommendation.service;
 
+import com.uniwa.course_recommendation.dto.AnswerDto;
 import com.uniwa.course_recommendation.dto.QuestionDto;
 import com.uniwa.course_recommendation.dto.QuestionRulesDto;
+import com.uniwa.course_recommendation.entity.Question;
+import com.uniwa.course_recommendation.entity.UserAnswers;
 import com.uniwa.course_recommendation.repo.AbstractRepository;
 import com.uniwa.course_recommendation.repo.QuestionRepository;
+import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,15 +44,28 @@ public class QuestionService {
                                     .id(questionDto.getId())
                                     .answer(option)
                                     .build());
-
                         }
                 );
                 questionDto.setAnswers(answersDto);
             }
-
         });
         return questions;
     }
+    @Transactional
+    public void saveAnswers(List<AnswerDto> answerDtoList, String sessionId, HttpSession httpSession) {
+        String trackId = UUID.randomUUID().toString();
 
-
+        answerDtoList.forEach(answer ->
+                {
+                    Question question = questionRepository.getReferenceById(Question.class,answer.getQuestionId());
+                    UserAnswers userAnswers = UserAnswers.builder()
+                            .sessionId(sessionId)
+                            .trackId(trackId)
+                            .question(question)
+                            .answer(answer.getAnswer())
+                            .build();
+                    questionRepository.add(userAnswers);
+                }
+        );
+    }
 }

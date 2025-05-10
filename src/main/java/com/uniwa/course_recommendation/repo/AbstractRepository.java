@@ -117,6 +117,10 @@ public abstract class AbstractRepository<T extends DbEntity> {
         }
     }
 
+    public <X extends DbEntity> X getReferenceById(Class<X> type,Long id) {
+        return entityManager.getReference(type,id);
+    }
+
 
 
 }
