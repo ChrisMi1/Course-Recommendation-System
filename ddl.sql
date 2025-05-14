@@ -62,7 +62,7 @@ CREATE TABLE `user_answers` (
 
 GRANT FILE ON *.* TO 'root'@'localhost';
 SET GLOBAL local_infile=1;
-load data local infile "C:\\Users\\xrist\\Downloads\\courses_data.csv" INTO TABLE course_recommendation.courses
+load data local infile "C:\\Users\\diony\\Documents\\courses_data.csv" INTO TABLE course_recommendation.courses
 FIELDS TERMINATED BY ';'
 LINES TERMINATED BY '\n'
 IGNORE 1 LINES

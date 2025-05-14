@@ -3,8 +3,11 @@ import feature2 from '../assets/feature2.png';
 import feature3 from '../assets/feature3.png';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { useNavigate } from 'react-router-dom';
 
 function Home() {
+  const navigate = useNavigate(); // hook for navigation
+
   return (
     <div>
       <Navbar />
@@ -14,11 +17,15 @@ function Home() {
         <div className="container">
           <h1 className="display-4">Course Recommendation System</h1>
           <p className="lead">Πατήστε το κουμπί για να ξεκινήσετε!</p>
-          <a href="questionnaire.html" className="btn btn-light btn-lg mt-3">
+          <button
+            onClick={() => navigate('/questionnaire')}
+            className="btn btn-light btn-lg mt-3"
+          >
             Start Questionnaire
-          </a>
+          </button>
         </div>
       </header>
+  
 
       {/* Features Section */}
       <section className="py-5">
@@ -46,6 +53,11 @@ function Home() {
       <Footer />
     </div>
   );
+  
+  
+  
+  
+  
 }
 
 export default Home;
