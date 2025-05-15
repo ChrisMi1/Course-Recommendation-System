@@ -27,6 +27,9 @@ public class QuestionService {
     @Autowired
     QuestionRepository questionRepository;
 
+    @Autowired
+    RedisService redisService;
+
     public List<QuestionDto> findAllQuestionsWithQuestionRules() {
         logger.info("Retrieving all questions with answers");
         List<QuestionRulesDto> questionRules = questionRepository.getAllQuestionsWithAnswers();
@@ -65,6 +68,7 @@ public class QuestionService {
                             .answer(answer.getAnswer())
                             .build();
                     questionRepository.add(userAnswers);
+                    redisService.saveAnswers(sessionId,answer);
                 }
         );
     }
