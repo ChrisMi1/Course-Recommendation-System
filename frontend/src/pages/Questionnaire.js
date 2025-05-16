@@ -6,7 +6,8 @@ function Questionnaire() {
   const [questionQueue, setQuestionQueue] = useState([]);
   const [currentQuestion, setCurrentQuestion] = useState(null);
   const [userAnswers, setUserAnswers] = useState([]);
-  const [isCompleted, setIsCompleted] = useState(false); 
+  const [isCompleted, setIsCompleted] = useState(false);
+  const [selectedAnswer, setSelectedAnswer] = useState(null); 
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -17,7 +18,7 @@ function Questionnaire() {
         const firstQuestion = response.data.find(q => q.id === 1);
         if (firstQuestion) {
           setCurrentQuestion(firstQuestion);
-          setIsCompleted(false); 
+          setIsCompleted(false);
         }
       } catch (error) {
         console.error('Failed to fetch questions:', error);
@@ -25,51 +26,62 @@ function Questionnaire() {
     };
 
     fetchQuestions();
-  }, []); 
+  }, []);
 
-  const handleAnswerClick = (nextIdsString, selectedAnswerText) => {
-    if (currentQuestion && selectedAnswerText) {
-      setUserAnswers(prevAnswers => [
-        ...prevAnswers,
-        {
-          questionId: currentQuestion.id,
-          question: currentQuestion.question,
-          answer: selectedAnswerText
-        }
-      ]);
+  // Handle answer selection only (doesn't advance)
+  const handleAnswerSelect = (nextIdsString, selectedAnswerText) => {
+    setSelectedAnswer({ nextIdsString, selectedAnswerText });
+  };
+
+  // Handle "Next Question" click
+  const handleNextClick = () => {
+    if (!selectedAnswer) {
+      alert('Please select an answer first.');
+      return;
     }
 
-    const newQueue = [...questionQueue];
+    const { nextIdsString, selectedAnswerText } = selectedAnswer;
 
+    const newAnswer = {
+      questionId: currentQuestion.id,
+      question: currentQuestion.question,
+      answer: selectedAnswerText
+    };
+
+    const updatedAnswers = [...userAnswers, newAnswer];
+    setUserAnswers(updatedAnswers); 
+
+    const newQueue = [...questionQueue];
     if (nextIdsString) {
       const nextIds = nextIdsString
         .split(',')
         .map(id => parseInt(id.trim(), 10))
-        .filter(id => !isNaN(id)); 
+        .filter(id => !isNaN(id));
       newQueue.push(...nextIds);
     }
 
-    
     while (newQueue.length > 0) {
       const nextId = newQueue.shift();
       const nextQuestion = allQuestions.find(q => q.id === nextId);
       if (nextQuestion) {
         setQuestionQueue(newQueue);
         setCurrentQuestion(nextQuestion);
+        setSelectedAnswer(null);
         return;
       }
     }
 
-   
+    
     setQuestionQueue([]);
     setCurrentQuestion(null);
-    setIsCompleted(true); 
-    submitAnswersToBackend();
+    setIsCompleted(true);
+    submitAnswersToBackend(updatedAnswers); 
   };
 
-  const submitAnswersToBackend = async () => {
+  
+  const submitAnswersToBackend = async (answersToSend) => {
     try {
-      const response = await axios.post('http://localhost:8080/answers', userAnswers, { withCredentials: true });
+      const response = await axios.post('http://localhost:8080/answers', answersToSend, { withCredentials: true });
       console.log('Answers submitted:', response.data);
     } catch (error) {
       console.error('Failed to submit answers:', error);
@@ -99,12 +111,22 @@ function Questionnaire() {
                 .map((ans, index) => (
                   <button
                     key={index}
-                    className="btn btn-outline-primary m-2"
-                    onClick={() => handleAnswerClick(ans.nextQuestionId, ans.answer)}
+                    className={`btn m-2 ${
+                      selectedAnswer?.selectedAnswerText === ans.answer
+                        ? 'btn-primary'
+                        : 'btn-outline-primary'
+                    }`}
+                    onClick={() => handleAnswerSelect(ans.nextQuestionId, ans.answer)}
                   >
                     {ans.answer}
                   </button>
                 ))}
+            </div>
+
+            <div className="mt-4">
+              <button className="btn btn-success" onClick={handleNextClick}>
+                Next Question
+              </button>
             </div>
           </div>
         ) : (
