@@ -52,12 +52,13 @@ public class QuestionService {
                 questionDto.setAnswers(answersDto);
             }
         });
+        logger.info("Retrieved with success");
         return questions;
     }
     @Transactional
     public void saveAnswers(List<AnswerDto> answerDtoList, String sessionId, HttpSession httpSession) {
         String trackId = UUID.randomUUID().toString();
-
+        logger.info("trying to save user answers...");
         answerDtoList.forEach(answer ->
                 {
                     Question question = questionRepository.getReferenceById(Question.class,answer.getQuestionId());
@@ -71,5 +72,6 @@ public class QuestionService {
                     redisService.saveAnswers(sessionId,answer);
                 }
         );
+        logger.info("user answers saved successfully");
     }
 }
