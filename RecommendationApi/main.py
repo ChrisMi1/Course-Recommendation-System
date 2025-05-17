@@ -32,7 +32,6 @@ def fetch_courses():
     cache_key = "courses_cache"
     cached_data = redis_client.get(cache_key)
     if cached_data:
-        print("🔁 Loaded courses from Redis")
         return pickle.loads(cached_data)
     with engine.connect() as conn:
         result = conn.execute(text("SELECT id, name, embedding FROM courses"))
