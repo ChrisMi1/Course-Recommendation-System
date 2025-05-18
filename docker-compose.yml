@@ -1,0 +1,79 @@
+version: '3.8'
+
+services:
+  backend-spring-app:
+    container_name: backend-spring-app
+    restart: always
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./backend-spring-app/target:/app/target
+    depends_on:
+      - database
+      - redis
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://database:3306/course_recommendation
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root!
+    networks:
+      - basic-network
+  frontend-react-app:
+    container_name: frontend-react-app
+    restart: always
+    depends_on:
+      - backend-spring-app
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    volumes:
+      - ./frontend-react-app:/app
+    networks:
+      - basic-network
+  database:
+    container_name: database
+    build:
+      context: ./
+      dockerfile: Dockerfile-db
+    environment:
+      MYSQL_ROOT_USER: root
+      MYSQL_ROOT_PASSWORD: root!
+      MYSQL_DATABASE: course_recommendation
+      MYSQL_USER: user
+      MYSQL_PASSWORD: user!
+    ports:
+      - "3310:3310"
+    volumes:
+      - db-data:/var/lib/mysql
+    networks:
+      - basic-network
+  recommender-api:
+    container_name: recommender-api
+    restart: always
+    depends_on:
+      - database
+    build:
+      context: ./RecommendationApi
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    networks:
+      - basic-network
+  redis:
+    image: redis:8.0
+    container_name: redis_cache
+    ports:
+      - "6379:6379"
+    networks:
+      - basic-network
+
+volumes:
+    db-data:
+
+networks:
+    basic-network:
+      driver: bridge
