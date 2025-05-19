@@ -28,12 +28,12 @@ function Questionnaire() {
     fetchQuestions();
   }, []);
 
-  // Handle answer selection only (doesn't advance)
+  
   const handleAnswerSelect = (nextIdsString, selectedAnswerText) => {
     setSelectedAnswer({ nextIdsString, selectedAnswerText });
   };
 
-  // Handle "Next Question" click
+  
   const handleNextClick = () => {
     if (!selectedAnswer) {
       alert('Please select an answer first.');
@@ -41,6 +41,9 @@ function Questionnaire() {
     }
 
     const { nextIdsString, selectedAnswerText } = selectedAnswer;
+    //ΜΠΟΡΕΙ ΝΑ ΓΡΑΦΕΙ ΚΑΙ ΕΤΣΙ 
+    //const nextIdsString = selectedAnswer.nextIdsString;
+    //const selectedAnswerText = selectedAnswer.selectedAnswerText;
 
     const newAnswer = {
       questionId: currentQuestion.id,
