@@ -62,7 +62,7 @@ CREATE TABLE `user_answers` (
 
 GRANT FILE ON *.* TO 'root'@'localhost';
 SET GLOBAL local_infile=1;
-load data local infile "C:\\Users\\diony\\Documents\\courses_data.csv" INTO TABLE course_recommendation.courses
+load data local infile "C:\\Users\\xrist\\Downloads\\courses_data.csv" INTO TABLE course_recommendation.courses
 FIELDS TERMINATED BY ';'
 LINES TERMINATED BY '\n'
 IGNORE 1 LINES
@@ -91,7 +91,7 @@ INSERT INTO `questions` (`question`,`options`) VALUES ('Πόσο άνετα αι
 INSERT INTO `questions` (`question`,`options`) VALUES ('Πώς θα βαθμολογούσατε την κατανόησή σας για το σχεδιασμό ψηφιακής λογικής (π.χ. συνδυαστικά και διαδοχικά κυκλώματα);','Αρχάριος,Βασικό,Ενδιάμεσος,Προχωρημένος,Ειδικός') ;
 INSERT INTO `questions` (`question`,`options`) VALUES ('Πώς θα αξιολογούσατε τις γνώσεις σας για τα MOSFET και τον ρόλο τους στα ολοκληρωμένα κυκλώματα;','Αρχάριος,Βασικό,Ενδιάμεσος,Προχωρημένος,Ειδικός') ;
 INSERT INTO `questions` (`question`,`options`) VALUES ('Πόσο άνετα είστε με το VHDL ή τη Verilog για το σχεδιασμό και την προσομοίωση ψηφιακών κυκλωμάτων;','Αρχάριος,Βασικό,Ενδιάμεσος,Προχωρημένος,Ειδικός') ;
-INSERT INTO `questions` (`question`,`options`) VALUES ('Ποιο είδος δικτύωσης σας ενδιαφέρει περισσότερο;','Αρχάριος,Βασικό,Ενδιάμεσος,Προχωρημένος,Ειδικός') ;
+INSERT INTO `questions` (`question`,`options`) VALUES ('Ποιο είδος δικτύωσης σας ενδιαφέρει περισσότερο;','Σχεδιασμός Δικτύου,Ασφάλεια Δικτύου,Cloud Computing,Ασύρματα δίκτυα και IoT,Τηλεπικοινωνίες') ;
 INSERT INTO `questions` (`question`,`options`) VALUES ('Πώς θα βαθμολογούσατε την κατανόηση των πρωτοκόλλων δικτύου (π.χ. TCP/IP, UDP, HTTP, FTP);','Αρχάριος,Βασικό,Ενδιάμεσος,Προχωρημένος,Ειδικός') ;
 INSERT INTO `questions` (`question`,`options`) VALUES ('Πώς θα αξιολογούσατε την κατανόηση της διεύθυνσης IP και του υποδικτύου;','Αρχάριος,Βασικό,Ενδιάμεσος,Προχωρημένος,Ειδικός') ;
 INSERT INTO `questions` (`question`,`options`) VALUES ('Πόσο άνετα είστε με το σχεδιασμό ενός απλού τοπικού δικτύου (LAN); ','Αρχάριος,Βασικό,Ενδιάμεσος,Προχωρημένος,Ειδικός') ;
