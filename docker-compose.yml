@@ -45,6 +45,11 @@ services:
       MYSQL_DATABASE: course_recommendation
       MYSQL_USER: user
       MYSQL_PASSWORD: user!
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     ports:
       - "3310:3310"
     volumes:
@@ -70,6 +75,14 @@ services:
       - "6379:6379"
     networks:
       - basic-network
+  generate-embeddings-script:
+    build:
+      context: ./TextFeature/
+      dockerfile: Dockerfile
+    depends_on:
+      database:
+        condition: service_healthy
+    command: [ "python", "init_script.py" ]
 
 volumes:
     db-data:
