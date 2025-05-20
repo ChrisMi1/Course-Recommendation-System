@@ -29,9 +29,9 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
-      - "3000:80"
+      - "3000:3000" #"3000:80"
     volumes:
-      - ./frontend-react-app:/app
+      - /c/Users/diony/PANOS/Course-Recommendation-System/frontend:/app #./frontend-react-app
     networks:
       - basic-network
   database:
@@ -54,6 +54,7 @@ services:
       - "3310:3310"
     volumes:
       - db-data:/var/lib/mysql
+      - /c/Users/diony/Documents/courses_data.csv:/var/lib/mysql-files/courses_data.csv # <-- ADD THIS LINE
     networks:
       - basic-network
   recommender-api:
@@ -82,7 +83,7 @@ services:
     depends_on:
       database:
         condition: service_healthy
-    command: [ "python", "init_script.py" ]
+
 
 volumes:
     db-data:
