@@ -60,13 +60,16 @@ CREATE TABLE `user_answers` (
     FOREIGN KEY(`question_id`) REFERENCES `questions`(`id`) 
 )ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-GRANT FILE ON *.* TO 'root'@'localhost';
+
 SET GLOBAL local_infile=1;
-load data local infile "C:\\Users\\xrist\\Downloads\\courses_data.csv" INTO TABLE course_recommendation.courses
+
+LOAD DATA INFILE '/var/lib/mysql-files/courses_data.csv' INTO TABLE course_recommendation.courses
+CHARACTER SET utf8mb4
 FIELDS TERMINATED BY ';'
 LINES TERMINATED BY '\n'
 IGNORE 1 LINES
-(`name`,`code`,`description`) ; 
+(`name`, `code`, `description`);
+
 
 INSERT INTO `questions` (`question`,`options`) VALUES ('Σε ποια ροή εξειδίκευσης θέλετε να εστιάσετε; ','Λογισμικό και Πληροφοριακά Συστήματα,Συστήματα Ροής Υλικών και Υπολογιστών,Δίκτυο Υπολογιστών και Επικοινωνιών') ;
 INSERT INTO `questions` (`question`,`options`) VALUES ('Για ποιο είδος ανάπτυξης λογισμικού σας ενδιαφέρει περισσότερο;','Άναπτυξη διαδικτυακών εφαρμογών,Ανάπτυξη παιχνιδιών,Ανάπτυξη κινητών εφαρμογών,Τεχνητή νοημοσύνη και μηχανική μάθηση ,Επιστήμη Δεδομένων') ;
