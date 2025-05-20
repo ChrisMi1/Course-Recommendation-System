@@ -1,8 +1,12 @@
 DROP SCHEMA IF EXISTS `course_recommendation`;
 
 CREATE SCHEMA IF NOT EXISTS `course_recommendation`;
+DEFAULT CHARACTER SET utf8mb4
+DEFAULT COLLATE utf8mb4_general_ci;
 
-USE `course_recommendation`; 
+USE `course_recommendation`;
+
+
 
 CREATE TABLE `courses` (
 	`id` INT NOT NULL AUTO_INCREMENT,
@@ -70,6 +74,8 @@ LINES TERMINATED BY '\n'
 IGNORE 1 LINES
 (`name`, `code`, `description`);
 
+SET NAMES utf8mb4;
+SET CHARACTER SET utf8mb4;
 
 INSERT INTO `questions` (`question`,`options`) VALUES ('Σε ποια ροή εξειδίκευσης θέλετε να εστιάσετε; ','Λογισμικό και Πληροφοριακά Συστήματα,Συστήματα Ροής Υλικών και Υπολογιστών,Δίκτυο Υπολογιστών και Επικοινωνιών') ;
 INSERT INTO `questions` (`question`,`options`) VALUES ('Για ποιο είδος ανάπτυξης λογισμικού σας ενδιαφέρει περισσότερο;','Άναπτυξη διαδικτυακών εφαρμογών,Ανάπτυξη παιχνιδιών,Ανάπτυξη κινητών εφαρμογών,Τεχνητή νοημοσύνη και μηχανική μάθηση ,Επιστήμη Δεδομένων') ;

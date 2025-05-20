@@ -29,9 +29,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
-      - "3000:3000" #"3000:80"
-    volumes:
-      - /c/Users/diony/PANOS/Course-Recommendation-System/frontend:/app #./frontend-react-app
+      - "3000:3000"
     networks:
       - basic-network
   database:
@@ -51,10 +49,12 @@ services:
       timeout: 5s
       retries: 5
     ports:
-      - "3310:3310"
+      - "3310:3306"
     volumes:
       - db-data:/var/lib/mysql
-      - /c/Users/diony/Documents/courses_data.csv:/var/lib/mysql-files/courses_data.csv # <-- ADD THIS LINE
+      - ./courses_data.csv:/var/lib/mysql-files/courses_data.csv
+      - ./my.cnf:/etc/mysql/conf.d/my.cnf
+    entrypoint: [ "/bin/bash", "-c", "chmod 644 /etc/mysql/conf.d/my.cnf && exec docker-entrypoint.sh mysqld" ]
     networks:
       - basic-network
   recommender-api:
@@ -83,7 +83,8 @@ services:
     depends_on:
       database:
         condition: service_healthy
-
+    networks:
+      - basic-network
 
 volumes:
     db-data:

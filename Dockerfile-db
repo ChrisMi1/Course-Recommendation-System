@@ -5,4 +5,4 @@ ENV MYSQL_DATABASE=course_recommendation
 ENV MYSQL_USER=user
 ENV MYSQL_PASSWORD=user!
 EXPOSE 3310
-COPY ./ddl.sql /docker-entrypoint-initdb.d/
+COPY ./ddl.sql /docker-entrypoint-initdb.d/ddl.sql

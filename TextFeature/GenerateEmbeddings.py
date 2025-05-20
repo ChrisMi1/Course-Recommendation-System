@@ -12,7 +12,7 @@ def clean_text(text):
     return text
 
 
-df = pd.read_excel('.\\courses_data.xlsx')
+df = pd.read_excel('./courses_data.xlsx')
 
 courses = []
 for idx, row in df.iterrows():
@@ -35,7 +35,8 @@ conn = mysql.connector.connect(
     host='database',
     user='root',
     password='root!',
-    database='course_recommendation'
+    database='course_recommendation',
+    port = 3306
 )
 cursor = conn.cursor()
 for name, embedding in embeddings:
