@@ -32,7 +32,7 @@ for name, desc in courses:
     embeddings.append((name, cls_embedding.squeeze().numpy()))
 
 conn = mysql.connector.connect(
-    host='database',
+    host='localhost',
     user='root',
     password='root!',
     database='course_recommendation',
