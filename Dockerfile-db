@@ -4,5 +4,12 @@ ENV MYSQL_ROOT_PASSWORD=root!
 ENV MYSQL_DATABASE=course_recommendation
 ENV MYSQL_USER=user
 ENV MYSQL_PASSWORD=user!
+RUN microdnf update -y && \
+    microdnf install -y glibc-langpack-en && \
+    microdnf clean all
+
+# Set UTF-8 locale
+ENV LANG=en_US.utf8
+ENV LC_ALL=en_US.utf8
 EXPOSE 3310
 COPY ./ddl.sql /docker-entrypoint-initdb.d/ddl.sql
