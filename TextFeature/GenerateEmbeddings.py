@@ -3,6 +3,7 @@ import torch
 import mysql.connector
 import json
 import pandas as pd
+from sentence_transformers import SentenceTransformer
 
 
 def clean_text(text):
@@ -14,22 +15,32 @@ def clean_text(text):
 
 df = pd.read_excel('./courses_data.xlsx')
 
-courses = []
-for idx, row in df.iterrows():
-    clean_description = clean_text(row['Περιγραφή'])
-    courses.append((row['Μάθημα'], clean_description))
+# courses = []
+# for idx, row in df.iterrows():
+#     clean_description = clean_text(row['Περιγραφή'])
+#     courses.append((row['Μάθημα'], clean_description))
+#
+# tokenizer = BertTokenizer.from_pretrained('nlpaueb/bert-base-greek-uncased-v1')
+# model = BertModel.from_pretrained('nlpaueb/bert-base-greek-uncased-v1')
+#
+# embeddings = []
+#
+# for name, desc in courses:
+#     inputs = tokenizer(desc, return_tensors="pt", truncation=True, padding=True, max_length=512)
+#     with torch.no_grad():
+#         outputs = model(**inputs)
+#     cls_embedding = outputs.last_hidden_state[:, 0, :].squeeze(0)
+#     embeddings.append((name, cls_embedding.squeeze().numpy()))
 
-tokenizer = BertTokenizer.from_pretrained('nlpaueb/bert-base-greek-uncased-v1')
-model = BertModel.from_pretrained('nlpaueb/bert-base-greek-uncased-v1')
+courses = [(row['Μάθημα'], clean_text(row['Περιγραφή'])) for _, row in df.iterrows()]
 
-embeddings = []
+model = SentenceTransformer('sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2')
 
-for name, desc in courses:
-    inputs = tokenizer(desc, return_tensors="pt", truncation=True, padding=True, max_length=512)
-    with torch.no_grad():
-        outputs = model(**inputs)
-    cls_embedding = outputs.last_hidden_state[:, 0, :].squeeze(0)
-    embeddings.append((name, cls_embedding.squeeze().numpy()))
+names = [name for name, _ in courses]
+descriptions = [desc for _, desc in courses]
+embeddings = model.encode(descriptions, convert_to_numpy=True)
+
+
 
 conn = mysql.connector.connect(
     host='localhost',
@@ -39,7 +50,7 @@ conn = mysql.connector.connect(
     port = 3306
 )
 cursor = conn.cursor()
-for name, embedding in embeddings:
+for name, embedding in zip(names, embeddings):
     embedding_str = json.dumps(embedding.tolist())
     cursor.execute('UPDATE courses SET embedding = %s WHERE name = %s', (embedding_str, name))
 conn.commit()

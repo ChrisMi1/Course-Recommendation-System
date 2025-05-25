@@ -3,6 +3,7 @@ import pickle
 import redis as redis
 from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel
+from sentence_transformers import SentenceTransformer
 from transformers import BertTokenizer, BertModel
 from sklearn.metrics.pairwise import cosine_similarity
 import torch
@@ -10,9 +11,10 @@ import numpy as np
 from sqlalchemy import create_engine, text
 import ast
 
-model_name = 'nlpaueb/bert-base-greek-uncased-v1'
-tokenizer = BertTokenizer.from_pretrained(model_name)
-model = BertModel.from_pretrained(model_name)
+# model_name = 'nlpaueb/bert-base-greek-uncased-v1'
+# tokenizer = BertTokenizer.from_pretrained(model_name)
+# model = BertModel.from_pretrained(model_name)
+model = SentenceTransformer('sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2')
 
 app = FastAPI()
 
@@ -22,11 +24,11 @@ redis_client = redis.Redis(host='localhost', port=6379, db=0)
 class SummaryRequest(BaseModel):
     summary: str
 
-def get_embedding(text: str):
-    inputs = tokenizer(text, return_tensors="pt", truncation=True, padding=True, max_length=512)
-    with torch.no_grad():
-        outputs = model(**inputs)
-    return outputs.last_hidden_state[:, 0, :].numpy().squeeze()  # [CLS] token
+# def get_embedding(text: str):
+#     inputs = tokenizer(text, return_tensors="pt", truncation=True, padding=True, max_length=512)
+#     with torch.no_grad():
+#         outputs = model(**inputs)
+#     return outputs.last_hidden_state[:, 0, :].numpy().squeeze()  # [CLS] token
 
 def fetch_courses():
     cache_key = "courses_cache"
@@ -49,7 +51,8 @@ def fetch_courses():
 @app.post("/recommendations")
 def get_recommendation(request: SummaryRequest):
     try:
-        user_embedding = get_embedding(request.summary)
+        #user_embedding = get_embedding(request.summary)
+        user_embedding = model.encode([request.summary])[0]
         courses = fetch_courses()
 
         similarities = []

@@ -35,6 +35,7 @@ public class CourseService {
             throw new KeyNotFound("Enable to find the key you provide");
         }
         String summary = UserProfileBuilder.buildProfileSummary(answers);
+        logger.info("The generated summary is: " + summary);
         String coursesInJson = sendSummaryToRecommenderApi(summary);
         return retrieveCoursesFromJson(coursesInJson);
     }

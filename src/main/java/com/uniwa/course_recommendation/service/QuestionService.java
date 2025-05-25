@@ -69,9 +69,9 @@ public class QuestionService {
                             .answer(answer.getAnswer())
                             .build();
                     questionRepository.add(userAnswers);
-                    redisService.saveAnswers(sessionId,answer);
                 }
         );
+        redisService.saveAnswers(sessionId,answerDtoList);
         logger.info("user answers saved successfully");
     }
 }

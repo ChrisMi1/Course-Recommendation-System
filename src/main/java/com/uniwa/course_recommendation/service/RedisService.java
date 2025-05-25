@@ -16,8 +16,10 @@ public class RedisService {
 
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
-    public void saveAnswers(String key, AnswerDto answerDto) {
-        redisTemplate.opsForList().rightPush(key, answerDto);
+    public void saveAnswers(String key, List<AnswerDto> answers) {
+        redisTemplate.delete(key);
+        answers.forEach(answer -> redisTemplate.opsForList().rightPush(key, answer));
+
     }
     public List<AnswerDto> getAnswers(String key) {
         logger.info("Retrieving answers of the user from redis...");
