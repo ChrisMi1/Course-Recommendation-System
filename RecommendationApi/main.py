@@ -36,14 +36,15 @@ def fetch_courses():
     if cached_data:
         return pickle.loads(cached_data)
     with engine.connect() as conn:
-        result = conn.execute(text("SELECT id, name, embedding FROM courses"))
+        result = conn.execute(text("SELECT id, name, embedding, url FROM courses"))
         courses = []
         for row in result:
             emb = np.array(ast.literal_eval(row.embedding))
             courses.append({
                 "id": row.id,
                 "name": row.name,
-                "embedding": emb
+                "embedding": emb,
+                "url": row.url
             })
         redis_client.setex(cache_key, 3600, pickle.dumps(courses))
         return courses
@@ -58,13 +59,13 @@ def get_recommendation(request: SummaryRequest):
         similarities = []
         for course in courses:
             sim = cosine_similarity([user_embedding], [course['embedding']])[0][0]
-            similarities.append((course['id'], course['name'], sim))
+            similarities.append((course['id'], course['name'], sim,course['url']))
 
         # Sort and take top 10
         top_courses = sorted(similarities, key=lambda x: x[2], reverse=True)[:10]
 
         return [
-            {"id": cid, "name": name, "similarity": float(sim)} for cid, name, sim in top_courses
+            {"id": cid, "name": name, "similarity": float(sim), "url": url} for cid, name, sim, url in top_courses
         ]
 
     except Exception as e:
