@@ -7,7 +7,11 @@ function Questionnaire() {
   const [currentQuestion, setCurrentQuestion] = useState(null);
   const [userAnswers, setUserAnswers] = useState([]);
   const [isCompleted, setIsCompleted] = useState(false);
-  const [selectedAnswer, setSelectedAnswer] = useState(null); 
+  const [selectedAnswer, setSelectedAnswer] = useState(null);
+  const [recommendations, setRecommendations] = useState([]);
+  const [showRecommendations, setShowRecommendations] = useState(false);
+
+
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -28,12 +32,12 @@ function Questionnaire() {
     fetchQuestions();
   }, []);
 
-  
+
   const handleAnswerSelect = (nextIdsString, selectedAnswerText) => {
     setSelectedAnswer({ nextIdsString, selectedAnswerText });
   };
 
-  
+
   const handleNextClick = () => {
     if (!selectedAnswer) {
       alert('Please select an answer first.');
@@ -52,7 +56,7 @@ function Questionnaire() {
     };
 
     const updatedAnswers = [...userAnswers, newAnswer];
-    setUserAnswers(updatedAnswers); 
+    setUserAnswers(updatedAnswers);
 
     const newQueue = [...questionQueue];
     if (nextIdsString) {
@@ -74,18 +78,22 @@ function Questionnaire() {
       }
     }
 
-    
+
     setQuestionQueue([]);
     setCurrentQuestion(null);
     setIsCompleted(true);
-    submitAnswersToBackend(updatedAnswers); 
+    submitAnswersToBackend(updatedAnswers);
   };
 
-  
+
   const submitAnswersToBackend = async (answersToSend) => {
     try {
       const response = await axios.post('http://localhost:8080/answers', answersToSend, { withCredentials: true });
       console.log('Answers submitted:', response.data);
+
+      // Now fetch recommendations
+      const recoResponse = await axios.get('http://localhost:8080/recommendations', { withCredentials: true });
+      setRecommendations(recoResponse.data);
     } catch (error) {
       console.error('Failed to submit answers:', error);
     }
@@ -104,6 +112,36 @@ function Questionnaire() {
         {isCompleted ? (
           <div className="text-center my-5">
             <h4>Το ερωτηματολόγιο ολοκληρώθηκε! 🎉</h4>
+
+            <button
+              className="btn btn-primary mt-4"
+              onClick={() => setShowRecommendations(prev => !prev)}
+            >
+              Eμφάνιση Αποτελεσμάτων
+            </button>
+
+            {showRecommendations && (
+              <>
+                <h5 className="mt-5">Οι προτεινόμενες προτάσεις μαθημάτων:</h5>
+                {recommendations.length > 0 ? (
+                  <ul className="list-group mt-3">
+                    {recommendations.map((course) => (
+                      <li
+                        key={course.id}
+                        className="list-group-item d-flex justify-content-between align-items-center"
+                      >
+                        <span>{course.name}</span>
+                        <span className="badge bg-primary rounded-pill">
+                          {course.similarity.toFixed(2)}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>Δεν υπάρχουν προτάσεις προς το παρόν.</p>
+                )}
+              </>
+            )}
           </div>
         ) : currentQuestion ? (
           <div key={currentQuestion.id} className="card p-4 shadow mb-4">
@@ -114,11 +152,10 @@ function Questionnaire() {
                 .map((ans, index) => (
                   <button
                     key={index}
-                    className={`btn m-2 ${
-                      selectedAnswer?.selectedAnswerText === ans.answer
-                        ? 'btn-primary'
-                        : 'btn-outline-primary'
-                    }`}
+                    className={`btn m-2 ${selectedAnswer?.selectedAnswerText === ans.answer
+                      ? 'btn-primary'
+                      : 'btn-outline-primary'
+                      }`}
                     onClick={() => handleAnswerSelect(ans.nextQuestionId, ans.answer)}
                   >
                     {ans.answer}
