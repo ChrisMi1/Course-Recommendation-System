@@ -29,6 +29,9 @@ public class Course extends AuditableDbEntity{
     @Column(name = "embedding")
     private String embedding;
 
+    @Column(name = "url")
+    private String url;
+
     @Override
     public Long getUniqueID() {
         return id;

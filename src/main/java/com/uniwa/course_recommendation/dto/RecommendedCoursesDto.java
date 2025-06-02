@@ -11,4 +11,5 @@ public class RecommendedCoursesDto {
     private Long id;
     private String name;
     private Double similarity;
+    private String url;
 }
