@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-
+import { AnimatePresence, motion } from 'framer-motion';
 
 
 function Questionnaire() {
@@ -114,65 +114,70 @@ function Questionnaire() {
 
 
   return (
-    <div>
-      <header className="bg-primary text-white text-center py-5">
-        <div className="container">
-          <h1 className="display-4">Questionnaire</h1>
-          <p className="lead">Answer the questions below:</p>
-        </div>
-      </header>
+  <div>
+    <header className="bg-primary text-white text-center py-5">
+      <div className="container">
+        <h1 className="display-4">Questionnaire</h1>
+        <p className="lead">Answer the questions below:</p>
+      </div>
+    </header>
 
-      <section className="container my-5">
-        {isCompleted ? (
-          <div className="text-center my-5">
-            <h4>Το ερωτηματολόγιο ολοκληρώθηκε! 🎉</h4>
+    <section className="container my-5">
+      {isCompleted ? (
+        <div className="text-center my-5">
+          <h4>Το ερωτηματολόγιο ολοκληρώθηκε! 🎉</h4>
 
-            <button
-              className="btn btn-primary mt-4"
-              onClick={() => setShowRecommendations(prev => !prev)}
-            >
-              Eμφάνιση Αποτελεσμάτων
-            </button>
+          <button
+            className="btn btn-primary mt-4"
+            onClick={() => setShowRecommendations(prev => !prev)}
+          >
+            Eμφάνιση Αποτελεσμάτων
+          </button>
 
-            {showRecommendations && (
-              <>
-                <h5 className="mt-5">Οι προτεινόμενες προτάσεις μαθημάτων:</h5>
-                {recommendations.map((course) => (
-                  <li key={course.id} className="list-group-item">
-                    <div className="d-flex justify-content-between align-items-center mb-1">
-                      <strong>{course.name}</strong>
-                      <button
-                        className="btn btn-sm btn-outline-secondary ms-2"
-                        onClick={() => toggleLesson(course.id)}
-                        style={{ fontSize: '1.2rem', lineHeight: '1' }}
+          {showRecommendations && (
+            <>
+              <h5 className="mt-5">Οι προτεινόμενες προτάσεις μαθημάτων:</h5>
+              {recommendations.map((course) => (
+                <li key={course.id} className="list-group-item">
+                  <div className="d-flex justify-content-between align-items-center mb-1">
+                    <strong>{course.name}</strong>
+                    <button
+                      className="btn btn-sm btn-outline-secondary ms-2"
+                      onClick={() => toggleLesson(course.id)}
+                      style={{ fontSize: '1.2rem', lineHeight: '1' }}
+                    >
+                      {expandedLessons[course.id] ? '︿' : '﹀'}
+                    </button>
+                  </div>
+                  {expandedLessons[course.id] && (
+                    <div className="mt-2">
+                      🔗{' '}
+                      <a
+                        href={course.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary"
                       >
-                        {expandedLessons[course.id] ? '︿' : '﹀'}
-                      </button>
+                        {course.url}
+                      </a>
                     </div>
-                    {expandedLessons[course.id] && (
-                      <div className="mt-2">
-                        🔗{' '}
-                        <a
-                          href={course.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-primary"
-                        >
-                          {course.url}
-                        </a>
-                      </div>
-                    )}
-                  </li>
-                ))}
-
-
-
-              </>
-            )}
-          </div>
-        ) : currentQuestion ? (
-          <div className="question-card-container">
-            <div key={currentQuestion.id} className="card p-4 shadow mb-4 question-card">
+                  )}
+                </li>
+              ))}
+            </>
+          )}
+        </div>
+      ) : currentQuestion ? (
+        <div className="question-card-container">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentQuestion.id}
+              initial={{ x: 300, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: -300, opacity: 0 }}
+              transition={{ duration: 0.4 }}
+              className="card p-4 shadow mb-4 question-card"
+            >
               <h5>{currentQuestion.question}</h5>
               <div className="mt-3">
                 {currentQuestion.answers
@@ -190,23 +195,23 @@ function Questionnaire() {
                     </button>
                   ))}
               </div>
-
               <div className="next-btn-container">
                 <button className="btn btn-success" onClick={handleNextClick}>
                   Next Question
                 </button>
               </div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      ) : (
+        <div className="text-center my-5">
+          <h4>Loading...</h4>
+        </div>
+      )}
+    </section>
+  </div>
+);
 
-            </div>
-          </div>
-        ) : (
-          <div className="text-center my-5">
-            <h4>Loading...</h4>
-          </div>
-        )}
-      </section>
-    </div>
-  );
 }
 
 export default Questionnaire;
