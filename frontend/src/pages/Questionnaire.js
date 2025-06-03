@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
+
+
 function Questionnaire() {
   const [allQuestions, setAllQuestions] = useState([]);
   const [questionQueue, setQuestionQueue] = useState([]);
@@ -10,6 +12,9 @@ function Questionnaire() {
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [recommendations, setRecommendations] = useState([]);
   const [showRecommendations, setShowRecommendations] = useState(false);
+  const [expandedLessons, setExpandedLessons] = useState({}); //url's toggle button
+  
+
 
 
 
@@ -99,6 +104,15 @@ function Questionnaire() {
     }
   };
 
+  //Toggle button
+  const toggleLesson = (id) => {
+    setExpandedLessons(prev => ({
+      ...prev,
+      [id]: !prev[id]
+    }));
+  };
+
+
   return (
     <div>
       <header className="bg-primary text-white text-center py-5">
@@ -123,50 +137,66 @@ function Questionnaire() {
             {showRecommendations && (
               <>
                 <h5 className="mt-5">Οι προτεινόμενες προτάσεις μαθημάτων:</h5>
-                {recommendations.length > 0 ? (
-                  <ul className="list-group mt-3">
-                    {recommendations.map((course) => (
-                      <li
-                        key={course.id}
-                        className="list-group-item d-flex justify-content-between align-items-center"
+                {recommendations.map((course) => (
+                  <li key={course.id} className="list-group-item">
+                    <div className="d-flex justify-content-between align-items-center mb-1">
+                      <strong>{course.name}</strong>
+                      <button
+                        className="btn btn-sm btn-outline-secondary ms-2"
+                        onClick={() => toggleLesson(course.id)}
+                        style={{ fontSize: '1.2rem', lineHeight: '1' }}
                       >
-                        <span>{course.name}</span>
-                        <span className="badge bg-primary rounded-pill">
-                          {course.similarity.toFixed(2)}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p>Δεν υπάρχουν προτάσεις προς το παρόν.</p>
-                )}
+                        {expandedLessons[course.id] ? '︿' : '﹀'}
+                      </button>
+                    </div>
+                    {expandedLessons[course.id] && (
+                      <div className="mt-2">
+                        🔗{' '}
+                        <a
+                          href={course.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary"
+                        >
+                          {course.url}
+                        </a>
+                      </div>
+                    )}
+                  </li>
+                ))}
+
+
+
               </>
             )}
           </div>
         ) : currentQuestion ? (
-          <div key={currentQuestion.id} className="card p-4 shadow mb-4">
-            <h5>{currentQuestion.question}</h5>
-            <div className="mt-3">
-              {currentQuestion.answers
-                .filter(ans => ans.answer !== null)
-                .map((ans, index) => (
-                  <button
-                    key={index}
-                    className={`btn m-2 ${selectedAnswer?.selectedAnswerText === ans.answer
-                      ? 'btn-primary'
-                      : 'btn-outline-primary'
-                      }`}
-                    onClick={() => handleAnswerSelect(ans.nextQuestionId, ans.answer)}
-                  >
-                    {ans.answer}
-                  </button>
-                ))}
-            </div>
+          <div className="question-card-container">
+            <div key={currentQuestion.id} className="card p-4 shadow mb-4 question-card">
+              <h5>{currentQuestion.question}</h5>
+              <div className="mt-3">
+                {currentQuestion.answers
+                  .filter(ans => ans.answer !== null)
+                  .map((ans, index) => (
+                    <button
+                      key={index}
+                      className={`btn m-2 ${selectedAnswer?.selectedAnswerText === ans.answer
+                        ? 'btn-primary'
+                        : 'btn-outline-primary'
+                        }`}
+                      onClick={() => handleAnswerSelect(ans.nextQuestionId, ans.answer)}
+                    >
+                      {ans.answer}
+                    </button>
+                  ))}
+              </div>
 
-            <div className="mt-4">
-              <button className="btn btn-success" onClick={handleNextClick}>
-                Next Question
-              </button>
+              <div className="next-btn-container">
+                <button className="btn btn-success" onClick={handleNextClick}>
+                  Next Question
+                </button>
+              </div>
+
             </div>
           </div>
         ) : (

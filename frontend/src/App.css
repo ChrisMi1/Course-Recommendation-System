@@ -24,3 +24,42 @@ header .container {
   position: relative;
   z-index: 1;
 }
+
+/* Center the card and set max width */
+.question-card-container {
+  position: relative;      /* relative parent */
+  overflow: hidden;        /* hide cards outside */
+  min-height: 200px;       /* stable height */
+  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: center;
+  backface-visibility: hidden;
+  perspective: 1000px;
+
+
+}
+
+.question-card {
+  max-width: 400px !important;
+  width: 100%;
+  position: absolute;      /* absolutely stack cards */
+  top: 0;
+  left: 0;
+  will-change: transform, opacity;
+  backface-visibility: hidden; /* helps smooth GPU animations */
+}
+
+.question-card h5 {
+  white-space: normal !important;
+  overflow-wrap: break-word !important;
+  word-break: break-word !important;
+}
+
+.next-btn-container {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+
