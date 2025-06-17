@@ -3,27 +3,65 @@
 /* Header with blue background */
 header.bg-primary {
   position: relative;
-  background-color: #0d6efd; /* Bootstrap’s primary blue */
-  background-image: url('/public/logo.png'); /* Correct path from public folder */
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-size: 25%;
+  background-color: #0d6efd; /* Bootstrap primary blue */
+  overflow: hidden;
 }
 
-/* Dark overlay */
+header.home-header {
+  min-height: 60vh;
+
+}
+
+/* Dark overlay on header */
 header.bg-primary::before {
   content: '';
   position: absolute;
   inset: 0;
   background: rgba(0, 0, 0, 0.3);
-  z-index: 0;
-}
-
-/* Make sure your content sits above */
-header .container {
-  position: relative;
   z-index: 1;
 }
+
+/* Content inside header sits above overlay and slider */
+header .container {
+  position: relative;
+  z-index: 2;
+
+}
+
+
+/* Slider wrapper fills header area and behind content */
+.slider-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 0; /* behind header content */
+  pointer-events: none; /* no interference with clicks */
+}
+
+/* Slider track holds all images side-by-side and slides horizontally */
+.slider-track {
+  display: flex;
+  height: 100%;
+  transition: transform 1s ease-in-out;
+}
+
+/* Each image takes full slider width and is semi-transparent watermark */
+.slider-image {
+  flex: 0 0 100%;       
+  height: 100%;  
+  width: 100%;       
+  object-fit: contain;
+  opacity: 1;
+  user-select: none;
+  pointer-events: none;
+
+
+}
+
+/* ===== Existing styles below ===== */
 
 /* Center the card and set max width */
 .question-card-container {
@@ -35,8 +73,6 @@ header .container {
   justify-content: center;
   backface-visibility: hidden;
   perspective: 1000px;
-
-
 }
 
 .question-card {
@@ -60,6 +96,38 @@ header .container {
   display: flex;
   justify-content: flex-end;
   width: 100%;
+}
+
+.centered-logo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 250px;
+  opacity: 1;
+  z-index: 0;
+  user-select: none;
+  pointer-events: none;
+}
+
+
+.logo-watermark {
+  user-select: none;
+  pointer-events: none;
+}
+
+.page-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.page-wrapper > main {
+  flex: 1;
+   display: flex;               /* enable flex */
+  flex-direction: column;      /* optional, default is fine */
+  justify-content: center;     /* vertical centering */
+  /*align-items: center;         /* horizontal centering */
 }
 
 
