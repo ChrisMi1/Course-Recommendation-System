@@ -57,14 +57,40 @@ public abstract class AbstractRepository<T extends DbEntity> {
         return jpqlQuery.getSingleResult();
     }
 
+    public Object jpqlQueryWithParamsSingleResult(String query, Map<String, Object> parameters) {
+        Query jpqlQuery;
+        jpqlQuery = entityManager.createQuery(query);
+        for(Map.Entry<String, Object> parameter : parameters.entrySet()) {
+            jpqlQuery.setParameter(parameter.getKey(), parameter.getValue());
+        }
+
+        try {
+            return jpqlQuery.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+
+    }
+
     public <X extends DbEntity> List<X> jpqlQuery(String query,Class<X> type) {
         TypedQuery<X> jpqlQuery = entityManager.createQuery(query,type);
         return jpqlQuery.getResultList();
     }
     @SuppressWarnings("unchecked")
-    public <X extends DbEntity> List<X> nativeQuery(String query,Class<X> type) {
-        Query jpqlQuery = entityManager.createNativeQuery(query,type);
+    public <X extends DbEntity> List<X> jpqlQueryWithParams(String query, Map<String, Object> parameters, Class<X> classType) {
+        Query jpqlQuery;
+        jpqlQuery = entityManager.createQuery(query);
+        for(Map.Entry<String, Object> parameter : parameters.entrySet()) {
+            jpqlQuery.setParameter(parameter.getKey(), parameter.getValue());
+        }
+
         return jpqlQuery.getResultList();
+    }
+
+    @SuppressWarnings("unchecked")
+    public <X extends DbEntity> List<X> nativeQuery(String query,Class<X> type) {
+        Query nativeQuery = entityManager.createNativeQuery(query,type);
+        return nativeQuery.getResultList();
     }
     /**
      * Execute a native query.
@@ -85,6 +111,20 @@ public abstract class AbstractRepository<T extends DbEntity> {
 
         return nativeQuery.getResultList();
     }
+
+    @SuppressWarnings("unchecked")
+    public List<Object> executeNativeQuery(String query, Map<String, Object> parameters) {
+        TypedQuery<Object> nativeQuery;
+
+        List<Object> paramsList = new ArrayList<>(parameters.entrySet().size());
+        query = replaceQueryParamsAndReturnNewQuery(query, parameters, paramsList);
+        nativeQuery =  (TypedQuery<Object>) entityManager.createNativeQuery(query);
+
+        fillQueryWithParams(nativeQuery, paramsList);
+
+        return nativeQuery.getResultList();
+    }
+
 
     private String replaceQueryParamsAndReturnNewQuery(String query, Map<String, Object> namedOrNumberedParameters, List<Object> paramsList) {
         Map <String, Object> parameters;

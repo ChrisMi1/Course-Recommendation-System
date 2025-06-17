@@ -1,7 +1,13 @@
 package com.uniwa.course_recommendation.entity;
 
+import com.uniwa.course_recommendation.dto.RecommendedCoursesDto;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "courses")
@@ -32,6 +38,9 @@ public class Course extends AuditableDbEntity{
     @Column(name = "url")
     private String url;
 
+    @Column(name = "labels")
+    private String labels;
+
     @Override
     public Long getUniqueID() {
         return id;
@@ -40,5 +49,25 @@ public class Course extends AuditableDbEntity{
     @Override
     public String getEntityTitle() {
         return "Course";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Course other)) return false;
+        return Objects.equals(this.id, other.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+
+    public static List<RecommendedCoursesDto> mapCourseToRecommendedCoursesDto(Set<Course> courses) {
+        System.out.println("Courses set: " + courses);
+        List<RecommendedCoursesDto> recommendedCoursesDtos = new ArrayList<>();
+        courses.forEach(cou -> recommendedCoursesDtos.add(RecommendedCoursesDto.builder().id(cou.getId()).name(cou.getName()).url(cou.getUrl()).build()));
+        return recommendedCoursesDtos;
     }
 }
