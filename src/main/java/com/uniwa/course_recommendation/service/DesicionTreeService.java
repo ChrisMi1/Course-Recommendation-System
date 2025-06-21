@@ -59,23 +59,23 @@ public class DesicionTreeService {
 
         if (answers.get(0).getAnswer().equalsIgnoreCase("Ροή Λογισμικού και Πληροφοριακών Συστημάτων")) {
             labels.put(Level.FLOW,"Flow Software");
-            if (answers.get(1).getAnswer().equalsIgnoreCase("Άναπτυξη διαδικτυακών εφαρμογών")) {
+            if (answers.get(1).getAnswer().equalsIgnoreCase("Ανάπτυξη διαδικτυακών εφαρμογών")) {
                 labels.put(Level.SPECIALIZATION,"Software Engineering,Information Systems");
-                findCoreCourses(recommendedCourses,"Άναπτυξη διαδικτυακών εφαρμογών");
+                findCoreCourses(recommendedCourses,"Ανάπτυξη διαδικτυακών εφαρμογών");
                 //check if user choose 1 selection from the question with multiple answers
-                if (answers.get(2).getAnswer().split(",").length <= 1 ) {
+                if (answers.get(2).getAnswer().split("\\|").length <= 1 ) {
                     logger.info("User gave only one selection in 3rd question");
-                    findCoursesFromInterests(recommendedCourses,"Άναπτυξη διαδικτυακών εφαρμογών",answers.get(2).getAnswer());
+                    findCoursesFromInterests(recommendedCourses,"Άνάπτυξη διαδικτυακών εφαρμογών",answers.get(2).getAnswer());
                 } else {
                     logger.info("User choose more than one selection in 3rd question");
-                    findCoursesBasedOnScoreFromInterests(labels,"Flow Software","Άναπτυξη διαδικτυακών εφαρμογών",answers.get(2).getAnswer(),recommendedCourses);
+                    findCoursesBasedOnScoreFromInterests(labels,"Flow Software","Ανάπτυξη διαδικτυακών εφαρμογών",answers.get(2).getAnswer(),recommendedCourses);
                 }
             } else if (answers.get(1).getAnswer().equalsIgnoreCase("Ανάπτυξη παιχνιδιών")) {
                 labels.put(Level.SPECIALIZATION,"Game Development");
                 findCoreCourses(recommendedCourses,"Ανάπτυξη παιχνιδιών");
                 //check if user choose 1 selection from the question with multiple answers
 
-                if (answers.get(2).getAnswer().split(",").length <= 1 ) {
+                if (answers.get(2).getAnswer().split("\\|").length <= 1 ) {
                     logger.info("User gave only one selection in 3rd question");
                     findCoursesFromInterests(recommendedCourses,"Ανάπτυξη παιχνιδιών",answers.get(2).getAnswer());
                 } else {
@@ -86,7 +86,7 @@ public class DesicionTreeService {
             } else if (answers.get(1).getAnswer().equalsIgnoreCase("Ανάπτυξη κινητής τηλεφωνίας")) {
                 labels.put(Level.SPECIALIZATION,"Mobile Development,Android Development,Software Engineering");
                 findCoreCourses(recommendedCourses,"Ανάπτυξη κινητής τηλεφωνίας");
-                if (answers.get(2).getAnswer().split(",").length <= 1 ) {
+                if (answers.get(2).getAnswer().split("\\|").length <= 1 ) {
                     logger.info("User gave only one selection in 3rd question");
                     findCoursesFromInterests(recommendedCourses,"Ανάπτυξη κινητής τηλεφωνίας",answers.get(2).getAnswer());
                 } else {
@@ -97,7 +97,7 @@ public class DesicionTreeService {
             } else {
                 labels.put(Level.SPECIALIZATION,"AI & Machine Learning,Data");
                 findCoreCourses(recommendedCourses,"Τεχνητή νοημοσύνη και μηχανική μάθηση");
-                if (answers.get(2).getAnswer().split(",").length <= 1 ) {
+                if (answers.get(2).getAnswer().split("\\|").length <= 1 ) {
                     logger.info("User gave only one selection in 3rd question");
                     findCoursesFromInterests(recommendedCourses,"Τεχνητή νοημοσύνη και μηχανική μάθηση",answers.get(2).getAnswer());
                     return recommendedCourses;
@@ -114,7 +114,7 @@ public class DesicionTreeService {
             if (answers.get(1).getAnswer().equalsIgnoreCase("Ενσωματωμένα Συστήματα")) {
                 labels.put(Level.SPECIALIZATION,"Embedded Systems,Hardware");
                 findCoreCourses(recommendedCourses,"Ενσωματωμένα Συστήματα");
-                if (answers.get(2).getAnswer().split(",").length <= 1 ) {
+                if (answers.get(2).getAnswer().split("\\|").length <= 1 ) {
                     logger.info("User gave only one selection in 3rd question");
                     findCoursesFromInterests(recommendedCourses,"Ενσωματωμένα Συστήματα",answers.get(2).getAnswer());
                 } else {
@@ -126,7 +126,7 @@ public class DesicionTreeService {
             } else if (answers.get(1).getAnswer().equalsIgnoreCase("Ρομποτική")) {
                 labels.put(Level.SPECIALIZATION,"Robotics,Embedded Systems, Hardware");
                 findCoreCourses(recommendedCourses,"Ρομποτική");
-                if (answers.get(2).getAnswer().split(",").length <= 1 ) {
+                if (answers.get(2).getAnswer().split("\\|").length <= 1 ) {
                     logger.info("User gave only one selection in 3rd question");
                     findCoursesFromInterests(recommendedCourses,"Ρομποτική",answers.get(2).getAnswer());
                 } else {
@@ -137,7 +137,7 @@ public class DesicionTreeService {
             } else if (answers.get(1).getAnswer().equalsIgnoreCase("Μικροϋπολογιστές")) {
                 labels.put(Level.SPECIALIZATION,"Embedded Systems, Hardware");
                 findCoreCourses(recommendedCourses,"Μικροϋπολογιστές");
-                if (answers.get(2).getAnswer().split(",").length <= 1 ) {
+                if (answers.get(2).getAnswer().split("\\|").length <= 1 ) {
                     logger.info("User gave only one selection in 3rd question");
                     findCoursesFromInterests(recommendedCourses,"Μικροϋπολογιστές",answers.get(2).getAnswer());
                 } else {
@@ -147,7 +147,7 @@ public class DesicionTreeService {
             } else {
                 labels.put(Level.SPECIALIZATION,"Hardware,Σχεδιασμός VLSI");
                 findCoreCourses(recommendedCourses,"Σχεδιασμός VLSI");
-                if (answers.get(2).getAnswer().split(",").length <= 1 ) {
+                if (answers.get(2).getAnswer().split("\\|").length <= 1 ) {
                     logger.info("User gave only one selection in 3rd question");
                     findCoursesFromInterests(recommendedCourses,"Σχεδιασμός VLSI",answers.get(2).getAnswer());
                 } else {
@@ -163,7 +163,7 @@ public class DesicionTreeService {
             if (answers.get(1).getAnswer().equalsIgnoreCase("Σχεδιασμός Δικτύου")) {
                 labels.put(Level.SPECIALIZATION,"Networking,Network Protocols");
                 findCoreCourses(recommendedCourses,"Σχεδιασμός Δικτύου");
-                if (answers.get(2).getAnswer().split(",").length <= 1 ) {
+                if (answers.get(2).getAnswer().split("\\|").length <= 1 ) {
                     logger.info("User gave only one selection in 3rd question");
                     findCoursesFromInterests(recommendedCourses,"Σχεδιασμός Δικτύου",answers.get(2).getAnswer());
                 } else {
@@ -175,7 +175,7 @@ public class DesicionTreeService {
             } else if (answers.get(1).getAnswer().equalsIgnoreCase("Ασφάλεια Δικτύου")) {
                 labels.put(Level.SPECIALIZATION,"Cybersecurity,Networking");
                 findCoreCourses(recommendedCourses,"Ασφάλεια Δικτύου");
-                if (answers.get(2).getAnswer().split(",").length <= 1 ) {
+                if (answers.get(2).getAnswer().split("\\|").length <= 1 ) {
                     logger.info("User gave only one selection in 3rd question");
                     findCoursesFromInterests(recommendedCourses,"Ασφάλεια Δικτύου",answers.get(2).getAnswer());
                 } else {
@@ -186,7 +186,7 @@ public class DesicionTreeService {
             } else if (answers.get(1).getAnswer().equalsIgnoreCase("Ασύρματα Δίκτυα και IoT")) {
                 labels.put(Level.SPECIALIZATION,"Wireless Networks,IoT,Networking");
                 findCoreCourses(recommendedCourses,"Ασύρματα Δίκτυα και IoT");
-                if (answers.get(2).getAnswer().split(",").length <= 1 ) {
+                if (answers.get(2).getAnswer().split("\\|").length <= 1 ) {
                     logger.info("User gave only one selection in 3rd question");
                     findCoursesFromInterests(recommendedCourses,"Ασύρματα Δίκτυα και IoT",answers.get(2).getAnswer());
                 } else {
@@ -197,7 +197,7 @@ public class DesicionTreeService {
             } else {
                 labels.put(Level.SPECIALIZATION,"Telecommunications,Networking");
                 findCoreCourses(recommendedCourses,"Τηλεπικοινωνίες");
-                if (answers.get(2).getAnswer().split(",").length <= 1 ) {
+                if (answers.get(2).getAnswer().split("\\|").length <= 1 ) {
                     logger.info("User gave only one selection in 3rd question");
                     findCoursesFromInterests(recommendedCourses,"Τηλεπικοινωνίες",answers.get(2).getAnswer());
                 } else {
@@ -210,7 +210,7 @@ public class DesicionTreeService {
     }
 
     private Set<String> getLabelsForInterests(String answer) {
-        List<String> answers = new ArrayList<>(List.of(answer.split(",")));
+        List<String> answers = new ArrayList<>(List.of(answer.split("\\|")));
         List<AnswerLabels> answerLabels = answerLabelRepository.getAnswerLabelsByAnswers(answers);
         Set<String> distinctAnswerLabels = new HashSet<>();
         for (AnswerLabels ans : answerLabels) {
@@ -250,7 +250,7 @@ public class DesicionTreeService {
         Map<String, List<Course>> potentialCourses = findThePotentialCourses(specialization, interests);
         List<CourseFeatures> courseFeaturesList = calculateScores(potentialCourses,flow,labels);
         //We do that for circular indexing
-        List<String> interestsOfUser = new ArrayList<>(List.of(interests.split(",")));
+        List<String> interestsOfUser = new ArrayList<>(List.of(interests.split("\\|")));
         int numInterests = potentialCourses.size();
         //Sort elements based on their score
         List<CourseFeatures> coursesFromInterestSorted = courseFeaturesList.stream().sorted(Comparator.comparingInt(CourseFeatures::getScore).reversed()).toList();
@@ -295,7 +295,6 @@ public class DesicionTreeService {
         List<CourseFeatures> courseFeaturesList = new ArrayList<>();
         //Find the scores for every course
         for (var pot : potentialCourses.entrySet()) {
-            //TODO: ADD ALSO DUPLICATES FUNCTIONALITY
             for (Course course : pot.getValue()) {
                 CourseFeatures courseFeatures = new CourseFeatures();
                 courseFeatures.setInterest(pot.getKey());
@@ -307,14 +306,6 @@ public class DesicionTreeService {
                 boolean matchesInterests = Arrays.stream(labels.get(Level.INTERESTS).split(",")).anyMatch(label -> course.getLabels().contains(label));
                 if (matchesInterests) {
                     courseFeatures.setScore(courseFeatures.getScore() + 5);
-
-//                    if (courseFeatures.isFlow()) {
-//                        //if it is in the same flow +5 pts
-//                        courseFeatures.setScore(courseFeatures.getScore() + 5);
-//                    } else {
-//                        //if it is not in the same flow +3 pts
-//                        courseFeatures.setScore(courseFeatures.getScore() + 3);
-//                    }
                     if (!courseFeatures.isFlow()) {
                         //if it is in the same flow +5 pts
                         courseFeatures.setScore(courseFeatures.getScore() + 2);
@@ -323,14 +314,6 @@ public class DesicionTreeService {
                 boolean matchesSpecialization = Arrays.stream(labels.get(Level.SPECIALIZATION).split(",")).anyMatch(label -> course.getLabels().contains(label));
                 if (matchesSpecialization) {
                     courseFeatures.setScore(courseFeatures.getScore() + 2);
-
-//                    if (courseFeatures.isFlow()) {
-//                        //if it is in the same flow +2 pts
-//                        courseFeatures.setScore(courseFeatures.getScore() + 2);
-//                    } else {
-//                        //if it is in the same flow +1 pts
-//                        courseFeatures.setScore(courseFeatures.getScore() + 1);
-//                    }
                 }
                 courseFeaturesList.add(courseFeatures);
             }
@@ -340,7 +323,7 @@ public class DesicionTreeService {
 
     private Map<String,List<Course>> findThePotentialCourses(String specialization,String interests) {
         Map<String,List<Course>> potentialCourses = new HashMap<>();
-        for (String interest : interests.split(",")) {
+        for (String interest : interests.split("\\|")) {
             CourseChoices courseChoices = courseRepository.findCoursesFromInterests(specialization,interest);
             List<String> courseChoicesNames = new ArrayList<>(List.of(courseChoices.getCourses().split(",")));
             List<Course> extractedCourses = new ArrayList<>();

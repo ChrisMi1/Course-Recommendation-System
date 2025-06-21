@@ -14,6 +14,7 @@ public class QuestionDto {
    private Long id;
    private String question;
    private List<QuestionRulesDto> answers;
+   private String type;
    @JsonIgnore
    private String options;
 }

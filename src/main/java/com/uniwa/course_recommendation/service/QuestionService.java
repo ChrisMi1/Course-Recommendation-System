@@ -39,7 +39,7 @@ public class QuestionService {
             questionDto.setAnswers(questionRules.stream().filter(ruleDto -> Objects.equals(ruleDto.getId(), questionDto.getId()))
                     .collect(Collectors.toList()));
             if (questionDto.getAnswers().isEmpty()) {
-                List<String> options = new ArrayList<>(List.of(questionDto.getOptions().split(",")));
+                List<String> options = new ArrayList<>(List.of(questionDto.getOptions().split("\\|")));
                 List<QuestionRulesDto> answersDto = new ArrayList<>();
                 options.forEach(option ->
                         {

@@ -17,7 +17,8 @@ import lombok.*;
                 columns = {
                         @ColumnResult(name = "id", type = Long.class),
                         @ColumnResult(name = "question", type = String.class),
-                        @ColumnResult(name = "options", type = String.class)
+                        @ColumnResult(name = "options", type = String.class),
+                        @ColumnResult(name = "type", type = String.class)
                 }))
 public class Question extends AuditableDbEntity{
 
@@ -31,6 +32,9 @@ public class Question extends AuditableDbEntity{
 
     @Column(name = "options")
     private String options;
+
+    @Column(name = "type")
+    private String type;
 
     @Override
     public Long getUniqueID() {
