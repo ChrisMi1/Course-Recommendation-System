@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import Spline from '@splinetool/react-spline';
 import logo1 from '../assets/logo1.png';
 import logo2 from '../assets/logo2.png';
 import logo3 from '../assets/logo3.png';
@@ -9,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 function Home() {
   const navigate = useNavigate();
   const images = [logo1, logo2, logo3];
-  const imagesLoop = [...images, images[0]]; // for looping
+  const imagesLoop = [...images, images[0]];
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const sliderRef = useRef(null);
@@ -28,7 +29,7 @@ function Home() {
           sliderRef.current.style.transition = 'none';
           setCurrentIndex(0);
           sliderRef.current.style.transform = `translateX(0%)`;
-          void sliderRef.current.offsetWidth; // force reflow
+          void sliderRef.current.offsetWidth;
           sliderRef.current.style.transition = 'transform 1s ease-in-out';
         }
       }, 1000);
@@ -75,6 +76,13 @@ function Home() {
             </div>
           </div>
         </header>
+
+        {/* Spline 3D logo section */}
+        <section className="spline-section text-center my-5">
+          <div style={{ width: '300px', height: '300px', margin: '0 auto' }}>
+            <Spline scene="/scene.splinecode" />
+          </div>
+        </section>
       </main>
 
       <Footer />

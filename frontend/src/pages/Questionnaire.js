@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { AnimatePresence, motion } from 'framer-motion';
 import logo from '../assets/logo.png';
-
+import jsPDF from 'jspdf'; // ✅ ADDED FOR PDF
+import RobotoRegular from '../assets/fonts/Roboto-Regular';
 
 
 function Questionnaire() {
@@ -15,10 +16,6 @@ function Questionnaire() {
   const [recommendations, setRecommendations] = useState([]);
   const [showRecommendations, setShowRecommendations] = useState(false);
   const [expandedLessons, setExpandedLessons] = useState({}); //url's toggle button
-
-
-
-
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -39,11 +36,9 @@ function Questionnaire() {
     fetchQuestions();
   }, []);
 
-
   const handleAnswerSelect = (nextIdsString, selectedAnswerText) => {
     setSelectedAnswer({ nextIdsString, selectedAnswerText });
   };
-
 
   const handleNextClick = () => {
     if (!selectedAnswer) {
@@ -85,13 +80,11 @@ function Questionnaire() {
       }
     }
 
-
     setQuestionQueue([]);
     setCurrentQuestion(null);
     setIsCompleted(true);
     submitAnswersToBackend(updatedAnswers);
   };
-
 
   const submitAnswersToBackend = async (answersToSend) => {
     try {
@@ -114,107 +107,154 @@ function Questionnaire() {
     }));
   };
 
+  // ✅ NEW: Download recommendations as PDF
+const downloadPDF = () => {
+  const doc = new jsPDF();
+
+  // ✅ Add the Roboto font
+  doc.addFileToVFS("Roboto-Regular.ttf", RobotoRegular);
+  doc.addFont("Roboto-Regular.ttf", "Roboto", "normal");
+  doc.setFont("Roboto");
+  doc.setFontSize(16);
+
+  // ✅ Add watermark logo
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+  const imgWidth = 100; // adjust as needed
+  const imgHeight = 100;
+  const x = (pageWidth - imgWidth) / 2;
+  const y = (pageHeight - imgHeight) / 2;
+
+  // Draw the image as watermark (centered)
+  doc.addImage(logo, 'PNG', x, y, imgWidth, imgHeight, '', 'FAST');
+
+  // ✅ Overlay actual text content
+  doc.text("Recommended Lessons", 10, 10);
+
+  recommendations.forEach((course, index) => {
+    const y = 20 + index * 15;
+    doc.setFontSize(14);
+    doc.text(`${index + 1}. ${course.name}`, 10, y);
+    doc.setFontSize(11);
+    doc.text(`URL: ${course.url}`, 12, y + 6);
+  });
+
+  doc.save('recommended-lessons.pdf');
+};
+
+
 
   return (
-    <div>
-      <header className="bg-primary text-white text-center py-5 position-relative">
-        <img src={logo} alt="Logo" className="centered-logo" />
-        <div className="container" style={{ position: 'relative', zIndex: 1 }}>
-          <h1 className="display-4">Questionnaire</h1>
-          <p className="lead">Answer the questions below:</p>
-        </div>
-      </header>
+  <div>
+    <header className="bg-primary text-white text-center py-5 position-relative">
+      <img src={logo} alt="Logo" className="centered-logo" />
+      <div className="container" style={{ position: 'relative', zIndex: 1 }}>
+        <h1 className="display-4">Questionnaire</h1>
+        <p className="lead">Answer the questions below:</p>
+      </div>
+    </header>
 
-      <section className="container my-5">
-        {isCompleted ? (
-          <div className="text-center my-5">
-            <h4>Το ερωτηματολόγιο ολοκληρώθηκε! 🎉</h4>
+    <section className="container my-5">
+      {isCompleted ? (
+        <div className="text-center my-5">
+          <h4>Το ερωτηματολόγιο ολοκληρώθηκε! 🎉</h4>
 
+          <div className="d-flex justify-content-center gap-3 mt-4 flex-wrap">
             <button
-              className="btn btn-primary mt-4"
+              className="btn btn-primary"
               onClick={() => setShowRecommendations(prev => !prev)}
             >
               Eμφάνιση Αποτελεσμάτων
             </button>
 
             {showRecommendations && (
-              <>
-                <h5 className="mt-5">Οι προτεινόμενες προτάσεις μαθημάτων:</h5>
-                {recommendations.map((course) => (
-                  <li key={course.id} className="list-group-item">
-                    <div className="d-flex justify-content-between align-items-center mb-1">
-                      <strong>{course.name}</strong>
-                      <button
-                        className="btn btn-sm btn-outline-secondary ms-2"
-                        onClick={() => toggleLesson(course.id)}
-                        style={{ fontSize: '1.2rem', lineHeight: '1' }}
-                      >
-                        {expandedLessons[course.id] ? '︿' : '﹀'}
-                      </button>
-                    </div>
-                    {expandedLessons[course.id] && (
-                      <div className="mt-2">
-                        🔗{' '}
-                        <a
-                          href={course.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-primary"
-                        >
-                          {course.url}
-                        </a>
-                      </div>
-                    )}
-                  </li>
-                ))}
-              </>
+              <button
+                className="btn btn-outline-secondary"
+                onClick={downloadPDF}
+              >
+                Download PDF
+              </button>
             )}
           </div>
-        ) : currentQuestion ? (
-          <div className="question-card-container">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={currentQuestion.id}
-                initial={{ x: 300, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                exit={{ x: -300, opacity: 0 }}
-                transition={{ duration: 0.4 }}
-                className="card p-4 shadow mb-4 question-card"
-              >
-                <h5>{currentQuestion.question}</h5>
-                <div className="mt-3 d-grid gap-2">
-                  {currentQuestion.answers
-                    .filter(ans => ans.answer !== null)
-                    .map((ans, index) => (
-                      <button
-                        key={index}
-                        className={`btn m-2 ${selectedAnswer?.selectedAnswerText === ans.answer
+
+          {showRecommendations && (
+            <>
+              <h5 className="mt-5">Οι προτεινόμενες προτάσεις μαθημάτων:</h5>
+              {recommendations.map((course) => (
+                <li key={course.id} className="list-group-item">
+                  <div className="d-flex justify-content-between align-items-center mb-1">
+                    <strong>{course.name}</strong>
+                    <button
+                      className="btn btn-sm btn-outline-secondary ms-2"
+                      onClick={() => toggleLesson(course.id)}
+                      style={{ fontSize: '1.2rem', lineHeight: '1' }}
+                    >
+                      {expandedLessons[course.id] ? '︿' : '﹀'}
+                    </button>
+                  </div>
+                  {expandedLessons[course.id] && (
+                    <div className="mt-2">
+                      🔗{' '}
+                      <a
+                        href={course.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary"
+                      >
+                        {course.url}
+                      </a>
+                    </div>
+                  )}
+                </li>
+              ))}
+            </>
+          )}
+        </div>
+      ) : currentQuestion ? (
+        <div className="question-card-container">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentQuestion.id}
+              initial={{ x: 300, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: -300, opacity: 0 }}
+              transition={{ duration: 0.4 }}
+              className="card p-4 shadow mb-4 question-card"
+            >
+              <h5>{currentQuestion.question}</h5>
+              <div className="mt-3 d-grid gap-2">
+                {currentQuestion.answers
+                  .filter(ans => ans.answer !== null)
+                  .map((ans, index) => (
+                    <button
+                      key={index}
+                      className={`btn m-2 ${
+                        selectedAnswer?.selectedAnswerText === ans.answer
                           ? 'btn-primary'
                           : 'btn-outline-primary'
-                          }`}
-                        onClick={() => handleAnswerSelect(ans.nextQuestionId, ans.answer)}
-                      >
-                        {ans.answer}
-                      </button>
-                    ))}
-                </div>
-                <div className="next-btn-container">
-                  <button className="btn btn-success" onClick={handleNextClick}>
-                    Next Question
-                  </button>
-                </div>
-              </motion.div>
-            </AnimatePresence>
-          </div>
-        ) : (
-          <div className="text-center my-5">
-            <h4>Loading...</h4>
-          </div>
-        )}
-      </section>
-    </div>
-  );
-
+                      }`}
+                      onClick={() => handleAnswerSelect(ans.nextQuestionId, ans.answer)}
+                    >
+                      {ans.answer}
+                    </button>
+                  ))}
+              </div>
+              <div className="next-btn-container">
+                <button className="btn btn-success" onClick={handleNextClick}>
+                  Next Question
+                </button>
+              </div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      ) : (
+        <div className="text-center my-5">
+          <h4>Loading...</h4>
+        </div>
+      )}
+    </section>
+  </div>
+);
 }
 
 export default Questionnaire;
