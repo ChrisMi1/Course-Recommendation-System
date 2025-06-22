@@ -56,6 +56,9 @@ public class DesicionTreeService {
         Set<String> distinctLabelsForInterests = getLabelsForInterests(answers.get(2).getAnswer());
 
         labels.put(Level.INTERESTS,String.join(",",distinctLabelsForInterests));
+        logger.info("User give as flow preference :" + answers.get(0).getAnswer());
+        logger.info("User give as specialization preference :" + answers.get(1).getAnswer());
+        logger.info("User give as interests preference :" + answers.get(2).getAnswer());
 
         if (answers.get(0).getAnswer().equalsIgnoreCase("Ροή Λογισμικού και Πληροφοριακών Συστημάτων")) {
             labels.put(Level.FLOW,"Flow Software");
@@ -83,16 +86,16 @@ public class DesicionTreeService {
 
                     findCoursesBasedOnScoreFromInterests(labels,"Flow Software","Ανάπτυξη παιχνιδιών",answers.get(2).getAnswer(),recommendedCourses);
                 }
-            } else if (answers.get(1).getAnswer().equalsIgnoreCase("Ανάπτυξη κινητής τηλεφωνίας")) {
+            } else if (answers.get(1).getAnswer().equalsIgnoreCase("Ανάπτυξη κινητών εφαρμογών")) {
                 labels.put(Level.SPECIALIZATION,"Mobile Development,Android Development,Software Engineering");
-                findCoreCourses(recommendedCourses,"Ανάπτυξη κινητής τηλεφωνίας");
+                findCoreCourses(recommendedCourses,"Ανάπτυξη κινητών εφαρμογών");
                 if (answers.get(2).getAnswer().split("\\|").length <= 1 ) {
                     logger.info("User gave only one selection in 3rd question");
-                    findCoursesFromInterests(recommendedCourses,"Ανάπτυξη κινητής τηλεφωνίας",answers.get(2).getAnswer());
+                    findCoursesFromInterests(recommendedCourses,"Ανάπτυξη κινητών εφαρμογών",answers.get(2).getAnswer());
                 } else {
                     logger.info("User choose more than one selection in 3rd question");
 
-                    findCoursesBasedOnScoreFromInterests(labels,"Flow Software","Ανάπτυξη κινητής τηλεφωνίας",answers.get(2).getAnswer(),recommendedCourses);
+                    findCoursesBasedOnScoreFromInterests(labels,"Flow Software","Ανάπτυξη κινητών εφαρμογών",answers.get(2).getAnswer(),recommendedCourses);
                 }
             } else {
                 labels.put(Level.SPECIALIZATION,"AI & Machine Learning,Data");
@@ -206,6 +209,7 @@ public class DesicionTreeService {
                 }
             }
         }
+
         return recommendedCourses;
     }
 
