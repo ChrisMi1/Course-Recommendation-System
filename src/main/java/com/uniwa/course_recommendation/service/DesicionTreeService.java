@@ -329,6 +329,10 @@ public class DesicionTreeService {
             List<Course> extractedCourses = new ArrayList<>();
             for (String name : courseChoicesNames) {
                 Course course = courseRepository.findCourseByName(name);
+                if (course == null) {
+                    logger.info("This course: " + name + "didn't found in db");
+                    continue;
+                }
                 extractedCourses.add(course);
             }
             potentialCourses.put(interest,extractedCourses);

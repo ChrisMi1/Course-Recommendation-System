@@ -36,16 +36,24 @@ def fetch_courses():
     if cached_data:
         return pickle.loads(cached_data)
     with engine.connect() as conn:
-        result = conn.execute(text("SELECT id, name, embedding, url FROM courses"))
+        result = conn.execute(text("SELECT id, name, embedding, url FROM courses WHERE id BETWEEN 1 AND 39"))
         courses = []
         for row in result:
-            emb = np.array(ast.literal_eval(row.embedding))
-            courses.append({
-                "id": row.id,
-                "name": row.name,
-                "embedding": emb,
-                "url": row.url
-            })
+            try:
+                emb_str = row.embedding
+                emb = np.array(ast.literal_eval(emb_str))
+                if emb.ndim != 1 or emb.size == 0:
+                    print(f"Skipping invalid embedding shape for course {row.id}")
+                    continue
+                courses.append({
+                    "id": row.id,
+                    "name": row.name,
+                    "embedding": emb,
+                    "url": row.url
+                })
+            except Exception as e:
+                print(f"Failed to parse embedding for course {row.id}: {e}")
+                continue  # Skip bad rows
         redis_client.setex(cache_key, 3600, pickle.dumps(courses))
         return courses
 
@@ -65,7 +73,7 @@ def get_recommendation(request: SummaryRequest):
         top_courses = sorted(similarities, key=lambda x: x[2], reverse=True)[:10]
 
         return [
-            {"id": cid, "name": name, "similarity": float(sim), "url": url} for cid, name, sim, url in top_courses
+            {"id": cid, "name": name, "similarity": float(sim), "url": url, "prerequest": True} for cid, name, sim, url in top_courses
         ]
 
     except Exception as e:

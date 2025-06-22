@@ -53,7 +53,7 @@ public class QuestionService {
             }
         });
         logger.info("Retrieved with success");
-        return questions;
+        return questions.stream().distinct().toList();
     }
     @Transactional
     public void saveAnswers(List<AnswerDto> answerDtoList, String sessionId, HttpSession httpSession) {

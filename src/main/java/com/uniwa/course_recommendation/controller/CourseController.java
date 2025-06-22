@@ -20,8 +20,8 @@ public class CourseController {
         return new ResponseEntity<>(courseService.findRecommendedCourses(httpSession.getId()), HttpStatus.OK);
     }
 
-    @GetMapping("/recommendations_2")
-    public ResponseEntity<List<RecommendedCoursesDto>> showRecommendedCourses2(HttpSession httpSession) {
-        return new ResponseEntity<>(courseService.findRecommendedCourses2(httpSession.getId()), HttpStatus.OK);
-    }
+//    @GetMapping("/recommendations_2")
+//    public ResponseEntity<List<RecommendedCoursesDto>> showRecommendedCourses2(HttpSession httpSession) {
+//        return new ResponseEntity<>(courseService.findRecommendedCourses2(httpSession.getId()), HttpStatus.OK);
+//    }
 }

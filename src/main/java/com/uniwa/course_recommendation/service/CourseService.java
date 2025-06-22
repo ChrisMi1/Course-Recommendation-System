@@ -4,9 +4,11 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.uniwa.course_recommendation.dto.AnswerDto;
 import com.uniwa.course_recommendation.dto.RecommendedCoursesDto;
+import com.uniwa.course_recommendation.entity.BasicStreamCourses;
 import com.uniwa.course_recommendation.entity.Course;
 import com.uniwa.course_recommendation.exception.KeyNotFound;
 import com.uniwa.course_recommendation.exception.RecommenderApiException;
+import com.uniwa.course_recommendation.repo.CourseRepository;
 import com.uniwa.course_recommendation.utils.JsonUtils;
 import com.uniwa.course_recommendation.utils.UserProfileBuilder;
 import okhttp3.*;
@@ -16,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -31,6 +34,9 @@ public class CourseService {
     RedisService redisService;
     @Autowired
     DesicionTreeService desicionTreeService;
+    @Autowired
+    CourseRepository courseRepository;
+
     public List<RecommendedCoursesDto> findRecommendedCourses(String sessionId) {
         logger.info("Trying to find the recommended courses based on the answers of the user");
         List<AnswerDto> answers = redisService.getAnswers(sessionId);
@@ -38,10 +44,31 @@ public class CourseService {
             logger.warn("No answers found for this session id");
             throw new KeyNotFound("Enable to find the key you provide");
         }
+        Set<Course> recommendedCourses = desicionTreeService.mapUserAnswersToCourses(answers);
+        List<RecommendedCoursesDto> recommendedCoursesDtos = Course.mapCourseToRecommendedCoursesDto(recommendedCourses);
+        findPrerequestCourses(answers,recommendedCoursesDtos);
+        findMandatoryCoursesForUserStream(answers.get(0).getAnswer(),recommendedCoursesDtos);
+        return recommendedCoursesDtos;
+    }
+
+    @Transactional
+    private void findMandatoryCoursesForUserStream(String flow,List<RecommendedCoursesDto> recommendedCoursesDtos) {
+        //TODO:CHECK IF NOT RETURNS NOTHING AND RETURN EXCEPTION
+        List<BasicStreamCourses> basicStreamCourses =  courseRepository.findBasicStreamCourses(flow);
+        basicStreamCourses.forEach(course -> recommendedCoursesDtos.add(RecommendedCoursesDto.builder()
+                        .id(course.getCourse().getId())
+                        .name(course.getCourse().getName())
+                        .flow(flow)
+                        .isMandatory(true)
+                        .isPrerequest(false)
+                        .url(course.getCourse().getUrl())
+                        .build()));
+    }
+
+    private void findPrerequestCourses(List<AnswerDto> answers,List<RecommendedCoursesDto> recommendedCoursesDtos) {
         String summary = UserProfileBuilder.buildProfileSummary(answers);
-        logger.info("The generated summary is: " + summary);
         String coursesInJson = sendSummaryToRecommenderApi(summary);
-        return retrieveCoursesFromJson(coursesInJson);
+        recommendedCoursesDtos.addAll(retrieveCoursesFromJson(coursesInJson));
     }
 
     private List<RecommendedCoursesDto> retrieveCoursesFromJson(String coursesInJson) throws JsonSyntaxException {
@@ -71,18 +98,10 @@ public class CourseService {
             if (StringUtils.isEmpty(recommendedCoursesInJson)) {
                 throw new RecommenderApiException("Failed to find the recommended courses as body is empty");
             }
-            logger.info("Summary send with success and we received response from the api");
+            logger.info("Summary send with success and we received response from the api this is the answer: " + recommendedCoursesInJson);
             return recommendedCoursesInJson;
         } catch (IOException ex) {
             throw new RecommenderApiException("Failed to find the recommended courses");
         }
-    }
-
-
-    public List<RecommendedCoursesDto> findRecommendedCourses2(String sessionId) {
-        logger.info("Trying to find the recommended courses based on the answers of the user");
-        List<AnswerDto> answers = redisService.getAnswers(sessionId);
-        Set<Course> recommendedCourses = desicionTreeService.mapUserAnswersToCourses(answers);
-        return Course.mapCourseToRecommendedCoursesDto(recommendedCourses);
     }
 }

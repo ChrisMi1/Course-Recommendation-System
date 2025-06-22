@@ -1,5 +1,6 @@
 package com.uniwa.course_recommendation.repo;
 
+import com.uniwa.course_recommendation.entity.BasicStreamCourses;
 import com.uniwa.course_recommendation.entity.Course;
 import com.uniwa.course_recommendation.entity.CourseChoices;
 import com.uniwa.course_recommendation.entity.DbEntity;
@@ -41,4 +42,16 @@ public class CourseRepository extends AbstractRepository<DbEntity> {
         params.put("answer2",answer2);
         return (CourseChoices) jpqlQueryWithParamsSingleResult(query,params);
     }
+    public List<BasicStreamCourses> findBasicStreamCourses(String flow) {
+        String query = """
+                SELECT sc FROM BasicStreamCourses sc
+                WHERE title = :flow
+                """;
+        HashMap<String,Object> params = new HashMap<>();
+        params.put("flow",flow);
+        return jpqlQueryWithParams(query,params,BasicStreamCourses.class);
+    }
+
+
+
 }

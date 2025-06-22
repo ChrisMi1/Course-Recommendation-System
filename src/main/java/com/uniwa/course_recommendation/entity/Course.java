@@ -67,7 +67,36 @@ public class Course extends AuditableDbEntity{
     public static List<RecommendedCoursesDto> mapCourseToRecommendedCoursesDto(Set<Course> courses) {
         System.out.println("Courses set: " + courses);
         List<RecommendedCoursesDto> recommendedCoursesDtos = new ArrayList<>();
-        courses.forEach(cou -> recommendedCoursesDtos.add(RecommendedCoursesDto.builder().id(cou.getId()).name(cou.getName()).url(cou.getUrl()).build()));
+        courses.forEach(cou -> {
+            if (cou.getLabels().contains("Flow Software")){
+                recommendedCoursesDtos.add(RecommendedCoursesDto.
+                        builder()
+                        .id(cou.getId())
+                        .flow("Ροή Λογισμικού και Πληροφοριακών Συστημάτων")
+                        .name(cou.getName())
+                        .url(cou.getUrl())
+                        .build());
+
+            } else if (cou.getLabels().contains("Flow Network")) {
+                recommendedCoursesDtos.add(RecommendedCoursesDto.
+                        builder()
+                        .id(cou.getId())
+                        .flow("Ροή Δικτύων Υπολογιστών και Επικοινωνιών")
+                        .name(cou.getName())
+                        .url(cou.getUrl())
+                        .build());
+
+            } else {
+                recommendedCoursesDtos.add(RecommendedCoursesDto.
+                        builder()
+                        .id(cou.getId())
+                        .flow("Ροή Υλικού και Υπολογιστικών Συστημάτων")
+                        .name(cou.getName())
+                        .url(cou.getUrl())
+                        .build());
+            }
+
+        });
         return recommendedCoursesDtos;
     }
 }
