@@ -41,6 +41,11 @@ public class Course extends AuditableDbEntity{
     @Column(name = "labels")
     private String labels;
 
+    @Column(name = "short_desc")
+    private String shortDesc;
+
+    @Transient
+    private String explanation;
     @Override
     public Long getUniqueID() {
         return id;
@@ -75,6 +80,7 @@ public class Course extends AuditableDbEntity{
                         .flow("Ροή Λογισμικού και Πληροφοριακών Συστημάτων")
                         .name(cou.getName())
                         .url(cou.getUrl())
+                        .explanation(cou.getExplanation())
                         .build());
 
             } else if (cou.getLabels().contains("Flow Network")) {
@@ -84,6 +90,7 @@ public class Course extends AuditableDbEntity{
                         .flow("Ροή Δικτύων Υπολογιστών και Επικοινωνιών")
                         .name(cou.getName())
                         .url(cou.getUrl())
+                        .explanation(cou.getExplanation())
                         .build());
 
             } else {
@@ -93,6 +100,7 @@ public class Course extends AuditableDbEntity{
                         .flow("Ροή Υλικού και Υπολογιστικών Συστημάτων")
                         .name(cou.getName())
                         .url(cou.getUrl())
+                        .explanation(cou.getExplanation())
                         .build());
             }
 

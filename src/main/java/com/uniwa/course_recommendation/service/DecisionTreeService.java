@@ -4,9 +4,10 @@ import com.uniwa.course_recommendation.dto.AnswerDto;
 import com.uniwa.course_recommendation.entity.AnswerLabels;
 import com.uniwa.course_recommendation.entity.Course;
 import com.uniwa.course_recommendation.entity.CourseChoices;
-import com.uniwa.course_recommendation.repo.AbstractRepository;
 import com.uniwa.course_recommendation.repo.AnswerLabelRepository;
 import com.uniwa.course_recommendation.repo.CourseRepository;
+import com.uniwa.course_recommendation.utils.ExplanationFetcher;
+import com.uniwa.course_recommendation.utils.UserProfile;
 import lombok.Getter;
 import lombok.Setter;
 import org.slf4j.Logger;
@@ -17,12 +18,14 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 @Service
-public class DesicionTreeService {
-    Logger logger = LoggerFactory.getLogger(AbstractRepository.class);
+public class DecisionTreeService {
+    Logger logger = LoggerFactory.getLogger(DecisionTreeService.class);
     @Autowired
     AnswerLabelRepository answerLabelRepository;
     @Autowired
     CourseRepository courseRepository;
+    @Autowired
+    OpenAIClient openAIClient;
 
     public enum Level {
         FLOW,
@@ -209,7 +212,17 @@ public class DesicionTreeService {
                 }
             }
         }
-
+        logger.info("building user profile for sending to the open AI api to extract explanation of courses");
+        UserProfile userProfile = UserProfile.builder()
+                .flow(answers.get(0).getAnswer())
+                .flowLabels(labels.get(Level.FLOW))
+                .specialization(answers.get(1).getAnswer())
+                .specializationLabels(labels.get(Level.SPECIALIZATION))
+                .interests(answers.get(2).getAnswer())
+                .interestsLabels(labels.get(Level.INTERESTS))
+                .build();
+        ExplanationFetcher fetcher = new ExplanationFetcher(openAIClient);
+        fetcher.fetchExplanations(userProfile, recommendedCourses);
         return recommendedCourses;
     }
 

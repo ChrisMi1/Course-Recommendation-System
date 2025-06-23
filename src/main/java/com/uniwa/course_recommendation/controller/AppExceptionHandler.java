@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.io.IOException;
+
 @ControllerAdvice
 public class AppExceptionHandler {
     @ExceptionHandler
@@ -23,5 +25,15 @@ public class AppExceptionHandler {
     public ResponseEntity<String> handleException(JsonSyntaxException jsonSyntaxException){
         return new ResponseEntity<>(jsonSyntaxException.getMessage(), HttpStatus.SERVICE_UNAVAILABLE);
     }
+
+    @ExceptionHandler
+    public ResponseEntity<String> handleException(IOException ioException){
+        return new ResponseEntity<>(ioException.getMessage(), HttpStatus.SERVICE_UNAVAILABLE);
+    }
+    @ExceptionHandler
+    public ResponseEntity<String> handleException(InterruptedException interruptedException){
+        return new ResponseEntity<>(interruptedException.getMessage(), HttpStatus.SERVICE_UNAVAILABLE);
+    }
+
 
 }

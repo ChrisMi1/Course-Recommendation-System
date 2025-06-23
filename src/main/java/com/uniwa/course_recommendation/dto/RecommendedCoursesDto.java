@@ -14,6 +14,7 @@ public class RecommendedCoursesDto {
     private Double similarity;
     private String flow;
     private boolean isMandatory;
+    private String explanation;
     @SerializedName("prerequest")
     private boolean isPrerequest;
     private String url;

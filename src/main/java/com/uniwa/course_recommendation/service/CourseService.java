@@ -33,7 +33,7 @@ public class CourseService {
     @Autowired
     RedisService redisService;
     @Autowired
-    DesicionTreeService desicionTreeService;
+    DecisionTreeService decisionTreeService;
     @Autowired
     CourseRepository courseRepository;
 
@@ -44,7 +44,7 @@ public class CourseService {
             logger.warn("No answers found for this session id");
             throw new KeyNotFound("Enable to find the key you provide");
         }
-        Set<Course> recommendedCourses = desicionTreeService.mapUserAnswersToCourses(answers);
+        Set<Course> recommendedCourses = decisionTreeService.mapUserAnswersToCourses(answers);
         List<RecommendedCoursesDto> recommendedCoursesDtos = Course.mapCourseToRecommendedCoursesDto(recommendedCourses);
         findPrerequestCourses(answers,recommendedCoursesDtos);
         findMandatoryCoursesForUserStream(answers.get(0).getAnswer(),recommendedCoursesDtos);
