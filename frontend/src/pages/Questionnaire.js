@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import logo from '../assets/logo.png';
 import jsPDF from 'jspdf';
 import RobotoRegular from '../assets/fonts/Roboto-Regular';
+import Spline from '@splinetool/react-spline';
 
 function Questionnaire() {
   const [allQuestions, setAllQuestions] = useState([]);
@@ -15,6 +16,7 @@ function Questionnaire() {
   const [recommendations, setRecommendations] = useState([]);
   const [showRecommendations, setShowRecommendations] = useState(false);
   const [expandedLessons, setExpandedLessons] = useState({});
+  const [loadingRecommendations, setLoadingRecommendations] = useState(false);
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -113,11 +115,14 @@ function Questionnaire() {
 
   const submitAnswersToBackend = async (answersToSend) => {
     try {
+      setLoadingRecommendations(true);
       await axios.post('http://localhost:8080/answers', answersToSend, { withCredentials: true });
       const recoResponse = await axios.get('http://localhost:8080/recommendations', { withCredentials: true });
       setRecommendations(recoResponse.data);
     } catch (error) {
       console.error('Failed to submit answers:', error);
+    } finally {
+      setLoadingRecommendations(false);
     }
   };
 
@@ -139,17 +144,14 @@ function Questionnaire() {
     doc.setFont("Roboto");
     doc.setFontSize(16);
 
-     // ✅ Add watermark logo
-  const pageWidth = doc.internal.pageSize.getWidth();
-  const pageHeight = doc.internal.pageSize.getHeight();
-  const imgWidth = 100; // adjust as needed
-  const imgHeight = 100;
-  const x = (pageWidth - imgWidth) / 2;
-  const y = (pageHeight - imgHeight) / 2;
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const imgWidth = 100;
+    const imgHeight = 100;
+    const x = (pageWidth - imgWidth) / 2;
+    const y = (pageHeight - imgHeight) / 2;
 
-  // Draw the image as watermark (centered)
-  doc.addImage(logo, 'PNG', x, y, imgWidth, imgHeight, '', 'FAST');
-
+    doc.addImage(logo, 'PNG', x, y, imgWidth, imgHeight, '', 'FAST');
     doc.text("Recommended Lessons", 10, 10);
 
     recommendations.forEach((course, index) => {
@@ -164,7 +166,16 @@ function Questionnaire() {
   };
 
   return (
-    <div>
+    <div className="full-blur-wrapper">
+      {loadingRecommendations && (
+        <>
+          <div className="blur-overlay"></div>
+          <div className="spline-logo-wrapper">
+            <Spline scene="/scene.splinecode" />
+          </div>
+        </>
+      )}
+
       <header className="bg-primary text-white text-center py-5 position-relative">
         <img src={logo} alt="Logo" className="centered-logo" />
         <div className="container">
@@ -207,22 +218,33 @@ function Questionnaire() {
                       {courses.map(course => (
                         <div className="card my-2 shadow-sm text-start" key={course.id}>
                           <div className="card-body d-flex align-items-center justify-content-start gap-3">
-                            <h6 className="mb-0 flex-grow-1">{course.name}</h6>
+                            <a
+                              href={course.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="mb-0 flex-grow-1 text-decoration-none fw-bold text-dark"
+                              style={{ fontSize: '1rem' }}
+                            >
+                              {course.name}
+                            </a>
                             <button className="btn btn-sm btn-outline-secondary" onClick={() => toggleLesson(course.id)}>
                               {expandedLessons[course.id] ? '︿' : '﹀'}
                             </button>
                           </div>
                           <div
-                            className={`collapse-content overflow-hidden px-3 text-start ${
-                              expandedLessons[course.id] ? 'expanded' : ''
-                            }`}
+                            className={`collapse-content overflow-hidden px-3 text-start ${expandedLessons[course.id] ? 'expanded' : ''}`}
                           >
-                            <p className="small text-muted mb-0">
-                              🔗{' '}
-                              <a href={course.url} target="_blank" rel="noopener noreferrer">
-                                {course.url}
-                              </a>
-                            </p>
+                            <div
+                              className="small text-muted mb-0"
+                              style={{
+                                whiteSpace: 'pre-line',
+                                maxHeight: '150px',
+                                overflowY: 'auto',
+                                paddingRight: '4px',
+                              }}
+                            >
+                              {course.explanation}
+                            </div>
                           </div>
                         </div>
                       ))}
@@ -250,15 +272,14 @@ function Questionnaire() {
                     .map((ans, index) => (
                       <button
                         key={index}
-                        className={`btn m-2 ${
-                          currentQuestion.type === 'multi'
-                            ? selectedAnswer.includes(ans.answer)
-                              ? 'btn-primary'
-                              : 'btn-outline-primary'
-                            : selectedAnswer === ans.answer
+                        className={`btn m-2 ${currentQuestion.type === 'multi'
+                          ? selectedAnswer.includes(ans.answer)
                             ? 'btn-primary'
                             : 'btn-outline-primary'
-                        }`}
+                          : selectedAnswer === ans.answer
+                            ? 'btn-primary'
+                            : 'btn-outline-primary'
+                          }`}
                         onClick={() => handleAnswerSelect(ans.answer)}
                       >
                         {ans.answer}
