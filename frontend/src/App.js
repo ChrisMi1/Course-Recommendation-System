@@ -5,6 +5,8 @@ import Results from './pages/Results';
 import Contact from './pages/Contact';
 import Questionnaire from './pages/Questionnaire';
 import './App.css';
+import ChatPopup from './components/ChatPopup';
+
 
 function App() {
   return (
@@ -16,6 +18,7 @@ function App() {
         <Route path="/results" element={<Results/>} />
         <Route path="/contact" element={<Contact/>} />
       </Routes>
+      <ChatPopup /> 
     </Router>
   );
 }
