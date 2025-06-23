@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 @Service
@@ -157,12 +158,17 @@ public class OpenAIClient {
                 .build();
 
         try (Response response = client.newCall(messagesRequest).execute()) {
-            Map<String, Object> messagesResp = objectMapper.readValue(response.body().string(), Map.class);
+            String utf8String = new String(response.body().bytes(), StandardCharsets.UTF_8);
+            Map<String, Object> messagesResp = objectMapper.readValue(utf8String, Map.class);
             List<Map<String, Object>> messages = (List<Map<String, Object>>) messagesResp.get("data");
             if (!messages.isEmpty()) {
                 Map<String, Object> lastMessage = messages.get(0);
-                Map<String, Object> contentBlock = ((List<Map<String, Object>>) lastMessage.get("content")).get(0);
-                return (String) contentBlock.get("text");
+                List<Map<String, Object>> contentList = (List<Map<String, Object>>) lastMessage.get("content");
+                if (!contentList.isEmpty()) {
+                    Map<String, Object> contentBlock = contentList.get(0);
+                    Map<String, Object> textBlock = (Map<String, Object>) contentBlock.get("text");
+                    return (String) textBlock.get("value");
+                }
             }
         }
 
