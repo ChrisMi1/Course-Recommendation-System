@@ -1,18 +1,15 @@
-/* App.css */
+/* === Header Styling === */
 
-/* Header with blue background */
 header.bg-primary {
   position: relative;
-  background-color: #2b6bc9; /* Bootstrap primary blue */
+  background-color: #2b6bc9;
   overflow: hidden;
 }
 
 header.home-header {
   min-height: 60vh;
-
 }
 
-/* Dark overlay on header */
 header.bg-primary::before {
   content: '';
   position: absolute;
@@ -21,17 +18,36 @@ header.bg-primary::before {
   z-index: 0;
 }
 
-
-
-/* Content inside header sits above overlay and slider */
 header .container {
   position: relative;
   z-index: 2;
-
 }
 
+header .container h1,
+header .container p {
+  color: #000;
+}
 
-/* Slider wrapper fills header area and behind content */
+/* === Logo === */
+.centered-logo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 250px;
+  opacity: 1;
+  z-index: 0;
+  user-select: none;
+  pointer-events: none;
+}
+
+.logo-watermark {
+  user-select: none;
+  pointer-events: none;
+}
+
+/* === Slider === */
+
 .slider-wrapper {
   position: absolute;
   top: 0;
@@ -39,38 +55,47 @@ header .container {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  z-index: 1; /* behind header content */
-  pointer-events: none; /* no interference with clicks */
+  z-index: 1;
+  pointer-events: none;
 }
 
-/* Slider track holds all images side-by-side and slides horizontally */
 .slider-track {
   display: flex;
   height: 100%;
   transition: transform 1s ease-in-out;
 }
 
-/* Each image takes full slider width and is semi-transparent watermark */
 .slider-image {
-  flex: 0 0 100%;       
-  height: 100%;  
-  width: 100%;       
+  flex: 0 0 100%;
+  height: 100%;
+  width: 100%;
   object-fit: contain;
   opacity: 1;
   user-select: none;
   pointer-events: none;
-  
-
-
 }
 
-/* ===== Existing styles below ===== */
+/* === Page Structure === */
 
-/* Center the card and set max width */
+.page-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.page-wrapper > main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* === Question Cards === */
+
 .question-card-container {
-  position: relative;      /* relative parent */
-  overflow: hidden;        /* hide cards outside */
-  min-height: 200px;       /* stable height */
+  position: relative;
+  overflow: hidden;
+  min-height: 200px;
   margin-bottom: 1.5rem;
   display: flex;
   justify-content: center;
@@ -81,11 +106,11 @@ header .container {
 .question-card {
   max-width: 400px !important;
   width: 100%;
-  position: absolute;      /* absolutely stack cards */
+  position: absolute;
   top: 0;
   left: 0;
   will-change: transform, opacity;
-  backface-visibility: hidden; /* helps smooth GPU animations */
+  backface-visibility: hidden;
 }
 
 .question-card h5 {
@@ -101,41 +126,77 @@ header .container {
   width: 100%;
 }
 
-.centered-logo {
-  position: absolute;
+/* === Recommendation Sections === */
+
+.section-box {
+  background: #f8f9fa;
+  border-radius: 10px;
+  padding: 1rem;
+}
+
+/* === Lesson Card Styles === */
+
+.lesson-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  gap: 1rem;
+}
+
+.lesson-card h6 {
+  margin-bottom: 0;
+}
+
+.collapse-content {
+  overflow: hidden;
+  text-align: left;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 0.5s ease, opacity 0.5s ease;
+}
+
+.collapse-content.expanded {
+  max-height: 200px;
+  opacity: 1;
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.full-blur-wrapper {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+.blur-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  backdrop-filter: blur(8px);
+  background-color: rgba(255, 255, 255, 0.3);
+  z-index: 9999;
+  pointer-events: none;
+}
+
+.full-blur-wrapper .content {
+  position: relative;
+  z-index: 1;
+}
+
+.spline-logo-wrapper {
+  position: fixed;
   top: 50%;
   left: 50%;
+  width: 300px;
+  height: 300px;
   transform: translate(-50%, -50%);
-  width: 250px;
-  opacity: 1;
-  z-index: 0;
-  user-select: none;
+  z-index: 10000;
   pointer-events: none;
+  backdrop-filter: none !important;
 }
-
-
-.logo-watermark {
-  user-select: none;
-  pointer-events: none;
-}
-
-.page-wrapper {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-.page-wrapper > main {
-  flex: 1;
-   display: flex;               /* enable flex */
-  flex-direction: column;      /* optional, default is fine */
-  justify-content: center;     /* vertical centering */
-  /*align-items: center;         /* horizontal centering */
-}
-
-
-header .container h1,
-header .container p {
-  color: #000; /* or black */
-}
-
