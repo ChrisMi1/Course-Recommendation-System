@@ -77,15 +77,6 @@ services:
       - "8000:8000"
     networks:
       - basic-network
-  generate-embeddings-script:
-    build:
-      context: ./TextFeature/
-      dockerfile: Dockerfile
-    depends_on:
-      database:
-        condition: service_healthy
-    networks:
-      - basic-network
 
 volumes:
     db-data:
