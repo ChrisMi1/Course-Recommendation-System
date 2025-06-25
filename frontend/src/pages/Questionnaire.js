@@ -218,18 +218,27 @@ function Questionnaire() {
                       {courses.map(course => (
                         <div className="card my-2 shadow-sm text-start" key={course.id}>
                           <div className="card-body d-flex align-items-center justify-content-start gap-3">
-                            <a
-                              href={course.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="mb-0 flex-grow-1 text-decoration-none fw-bold text-dark"
-                              style={{ fontSize: '1rem' }}
-                            >
-                              {course.name}
-                            </a>
-                            <button className="btn btn-sm btn-outline-secondary" onClick={() => toggleLesson(course.id)}>
-                              {expandedLessons[course.id] ? '︿' : '﹀'}
-                            </button>
+                            <div className="flex-grow-1">
+                              <h6 className="mb-0">
+                                <a
+                                  href={course.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-decoration-none fw-bold text-dark"
+                                  style={{ fontSize: '1rem' }}
+                                >
+                                  {course.name}
+                                </a>
+                              </h6>
+                            </div>
+                            {(!course.mandatory && !course.prerequest) && (
+                              <button
+                                className="btn btn-sm btn-outline-secondary"
+                                onClick={() => toggleLesson(course.id)}
+                              >
+                                {expandedLessons[course.id] ? '︿' : '﹀'}
+                              </button>
+                            )}
                           </div>
                           <div
                             className={`collapse-content overflow-hidden px-3 text-start ${expandedLessons[course.id] ? 'expanded' : ''}`}
@@ -295,7 +304,10 @@ function Questionnaire() {
             </AnimatePresence>
           </div>
         ) : (
-          <p>Loading...</p>
+          <div className="d-flex justify-content-center">
+            <p>Loading...</p>
+          </div>
+
         )}
       </section>
     </div>

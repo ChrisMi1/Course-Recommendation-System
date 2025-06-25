@@ -27,10 +27,10 @@ function ChatPopup() {
 
         try {
             const response = await axios.get(`http://localhost:8080/chatbot?messageUser=${encodeURIComponent(userMessage)}`);
-            const reply = response.data || '❌ No response';
+            const reply = response.data;
             setMessages(prev => [...prev, { sender: 'bot', text: reply }]);
         } catch {
-            setMessages(prev => [...prev, { sender: 'bot', text: '❌ Error: Cannot reach backend.' }]);
+            setMessages(prev => [...prev, { sender: 'bot', text: 'Right now i am not availiable.' }]);
         } finally {
             setLoading(false);
         }
