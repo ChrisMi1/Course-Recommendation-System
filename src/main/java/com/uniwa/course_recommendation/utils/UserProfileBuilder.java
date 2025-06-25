@@ -188,12 +188,9 @@ public class UserProfileBuilder {
 
     public static String buildProfileSummary(List<AnswerDto> answers) {
         StringBuilder summary = new StringBuilder();
-        summary.append("Ο χρήστης ενδιαφέρεται για την ροή " + answers.get(0).getAnswer() + " καθώς και για την ειδίκευση " + answers.get(1).getAnswer() + ".");
-        summary.append("Σαν επιπλέον ενδιαφέροντα έχει ");
-        Arrays.stream(answers.get(2).getAnswer().split("\\|")).forEach(ans -> summary.append(ans));
-        summary.append("Ο χρήστης δυσκολεύεται με τα κατώθι ");
+        summary.append("Ο χρήστης δυσκολεύεται με τα κατώθι: ");
         for (int i=3; i<answers.size(); i++) {
-            Arrays.stream(answers.get(i).getAnswer().split("\\|")).forEach(ans -> summary.append(ans));
+            Arrays.stream(answers.get(i).getAnswer().split("\\|")).forEach(ans -> summary.append(ans + ". "));
         }
         return summary.toString();
     }
