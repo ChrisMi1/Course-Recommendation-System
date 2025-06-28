@@ -106,7 +106,6 @@ public class DecisionTreeService {
                 if (answers.get(2).getAnswer().split("\\|").length <= 1 ) {
                     logger.info("User gave only one selection in 3rd question");
                     findCoursesFromInterests(recommendedCourses,"Τεχνητή νοημοσύνη και μηχανική μάθηση",answers.get(2).getAnswer());
-                    return recommendedCourses;
                 } else {
                     logger.info("User choose more than one selection in 3rd question");
 
