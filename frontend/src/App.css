@@ -250,3 +250,22 @@ html, body, #root {
     opacity: 1;
   }
 }
+
+.brand-pill {
+  background-color: #fff;           /* white background */
+  color: #444242;                      /* black text */
+  padding: 6px 16px;
+  border-radius: 999px;
+  font-weight: bold;
+  font-size: 1.1rem;
+  border: 2px solid black;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  display: inline-block;
+  transition: color 0.2s ease;
+}
+
+.brand-pill:hover {
+  color: #111;                      /* slightly darker black on hover */
+  cursor: pointer;
+}
+

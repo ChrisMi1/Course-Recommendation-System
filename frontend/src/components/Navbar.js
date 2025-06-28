@@ -3,8 +3,10 @@ import { Link } from 'react-router-dom';
 function Navbar() {
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
-      <div className="container">
-        <Link className="navbar-brand" to="/">URECO</Link>
+      <div className="container-fluid">
+        <Link className="navbar-brand" to="/">
+          <span className="brand-pill">URESY</span>
+        </Link>
         <button
           className="navbar-toggler"
           type="button"
@@ -18,8 +20,13 @@ function Navbar() {
         <div className="collapse navbar-collapse" id="navMenu">
           <ul className="navbar-nav ms-auto">
             {/* <li className="nav-item"><Link className="nav-link" to="/results">Results</Link></li> */}
-            <li className="nav-item"><Link className="nav-link" to="/about">About</Link></li>
-            <li className="nav-item"><Link className="nav-link" to="/contact">Contact</Link></li>
+            <li className="nav-item">
+              <Link className="nav-link fw-bold" to="/about">About</Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link fw-bold" to="/contact">Contact</Link>
+            </li>
+
           </ul>
         </div>
       </div>

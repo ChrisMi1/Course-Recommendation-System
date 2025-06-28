@@ -1,3 +1,5 @@
+// Updated Questionnaire.js with smooth expand/collapse for main tabs (full height)
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -5,6 +7,8 @@ import logo from '../assets/logo.png';
 import jsPDF from 'jspdf';
 import RobotoRegular from '../assets/fonts/Roboto-Regular';
 import Spline from '@splinetool/react-spline';
+import Navbar from '../components/Navbar';
+
 
 function Questionnaire() {
   const [allQuestions, setAllQuestions] = useState([]);
@@ -17,13 +21,14 @@ function Questionnaire() {
   const [showRecommendations, setShowRecommendations] = useState(false);
   const [expandedLessons, setExpandedLessons] = useState({});
   const [loadingRecommendations, setLoadingRecommendations] = useState(false);
+  const [activeFlowTab, setActiveFlowTab] = useState('Όλα');
+  const [expandedSections, setExpandedSections] = useState({});
 
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
         const response = await axios.get('http://localhost:8080/questions', { withCredentials: true });
         setAllQuestions(response.data);
-
         const firstQuestion = response.data.find(q => q.id === 1);
         if (firstQuestion) {
           setCurrentQuestion(firstQuestion);
@@ -33,7 +38,6 @@ function Questionnaire() {
         console.error('Failed to fetch questions:', error);
       }
     };
-
     fetchQuestions();
   }, []);
 
@@ -45,12 +49,9 @@ function Questionnaire() {
 
   const handleAnswerSelect = (answerText) => {
     if (!currentQuestion) return;
-
     if (currentQuestion.type === 'multi') {
       setSelectedAnswer(prev =>
-        prev.includes(answerText)
-          ? prev.filter(a => a !== answerText)
-          : [...prev, answerText]
+        prev.includes(answerText) ? prev.filter(a => a !== answerText) : [...prev, answerText]
       );
     } else {
       setSelectedAnswer(answerText);
@@ -77,7 +78,6 @@ function Questionnaire() {
     setUserAnswers(updatedAnswers);
 
     const newQueue = [...questionQueue];
-
     const processAnswers = (selAns) => {
       const answerObj = currentQuestion.answers.find(ans => ans.answer === selAns);
       if (answerObj?.nextQuestionId) {
@@ -96,7 +96,6 @@ function Questionnaire() {
     }
 
     const uniqueQueue = [...new Set(newQueue)];
-
     while (uniqueQueue.length > 0) {
       const nextId = uniqueQueue.shift();
       const nextQuestion = allQuestions.find(q => q.id === nextId);
@@ -119,6 +118,10 @@ function Questionnaire() {
       await axios.post('http://localhost:8080/answers', answersToSend, { withCredentials: true });
       const recoResponse = await axios.get('http://localhost:8080/recommendations', { withCredentials: true });
       setRecommendations(recoResponse.data);
+      setShowRecommendations(true);
+      setTimeout(() => {
+        document.getElementById("recommendationsSection")?.scrollIntoView({ behavior: "smooth" });
+      }, 100);
     } catch (error) {
       console.error('Failed to submit answers:', error);
     } finally {
@@ -130,12 +133,25 @@ function Questionnaire() {
     setExpandedLessons(prev => ({ ...prev, [id]: !prev[id] }));
   };
 
-  const handleShowRecommendations = () => {
-    setShowRecommendations(true);
-    setTimeout(() => {
-      document.getElementById("recommendationsSection")?.scrollIntoView({ behavior: "smooth" });
-    }, 100);
+  const toggleSection = (title) => {
+    setExpandedSections(prev => {
+      const isExpanding = !prev[title];
+      const updated = { ...prev, [title]: isExpanding };
+
+      if (isExpanding) {
+        // Delay scroll so it happens after expand animation starts
+        setTimeout(() => {
+          const el = document.getElementById(`${title}-section`);
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }, 400); // Slightly after framer-motion transition (0.5s)
+      }
+
+      return updated;
+    });
   };
+
 
   const downloadPDF = () => {
     const doc = new jsPDF();
@@ -143,17 +159,8 @@ function Questionnaire() {
     doc.addFont("Roboto-Regular.ttf", "Roboto", "normal");
     doc.setFont("Roboto");
     doc.setFontSize(16);
-
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const pageHeight = doc.internal.pageSize.getHeight();
-    const imgWidth = 100;
-    const imgHeight = 100;
-    const x = (pageWidth - imgWidth) / 2;
-    const y = (pageHeight - imgHeight) / 2;
-
-    doc.addImage(logo, 'PNG', x, y, imgWidth, imgHeight, '', 'FAST');
+    doc.addImage(logo, 'PNG', 55, 40, 100, 100);
     doc.text("Recommended Lessons", 10, 10);
-
     recommendations.forEach((course, index) => {
       const y = 20 + index * 15;
       doc.setFontSize(14);
@@ -161,7 +168,6 @@ function Questionnaire() {
       doc.setFontSize(11);
       doc.text(`URL: ${course.url}`, 12, y + 6);
     });
-
     doc.save('recommended-lessons.pdf');
   };
 
@@ -175,7 +181,7 @@ function Questionnaire() {
           </div>
         </>
       )}
-
+      <Navbar />
       <header className="bg-primary text-white text-center py-5 position-relative">
         <img src={logo} alt="Logo" className="centered-logo" />
         <div className="container">
@@ -189,9 +195,6 @@ function Questionnaire() {
           <div className="text-center my-5">
             <h4>Το ερωτηματολόγιο ολοκληρώθηκε! 🎉</h4>
             <div className="d-flex justify-content-center gap-3 mt-4 flex-wrap">
-              <button className="btn btn-primary" onClick={handleShowRecommendations}>
-                Εμφάνιση Αποτελεσμάτων
-              </button>
               {showRecommendations && (
                 <button className="btn btn-outline-secondary" onClick={downloadPDF}>
                   Download PDF
@@ -203,60 +206,89 @@ function Questionnaire() {
               <div id="recommendationsSection">
                 <h5 className="mt-5">Οι προτεινόμενες προτάσεις μαθημάτων:</h5>
 
-                {[
-                  { title: 'Υποχρεωτικά Μαθήματα', filter: c => c.mandatory, color: 'primary', icon: 'check-circle-fill' },
-                  { title: 'Προαπαιτούμενα Μαθήματα', filter: c => c.prerequest, color: 'warning', icon: 'arrow-right-circle' },
-                  { title: 'Επιλεγόμενα Μαθήματα', filter: c => !c.mandatory && !c.prerequest, color: 'success', icon: 'star-fill' }
-                ].map(({ title, filter, color, icon }) => {
-                  const courses = recommendations.filter(filter);
-                  if (courses.length === 0) return null;
+                {[{
+                  title: 'Επιλεγόμενα Μαθήματα',
+                  filter: c => !c.mandatory && !c.prerequest,
+                  color: 'success',
+                  icon: 'star-fill'
+                }, {
+                  title: 'Βασικής Ροής Μαθήματα',
+                  filter: c => c.mandatory,
+                  color: 'primary',
+                  icon: 'check-circle-fill'
+                }, {
+                  title: 'Προαπαιτούμενα Μαθήματα',
+                  filter: c => c.prerequest,
+                  color: 'warning',
+                  icon: 'arrow-right-circle'
+                }].map(({ title, filter, color, icon }) => {
+                  const isExpanded = expandedSections[title];
                   return (
-                    <div key={title} className="mt-4 section-box">
-                      <h6 className={`fw-bold text-${color} d-flex align-items-center`}>
-                        <i className={`bi bi-${icon} me-2`} /> {title}:
-                      </h6>
-                      {courses.map(course => (
-                        <div className="card my-2 shadow-sm text-start" key={course.id}>
-                          <div className="card-body d-flex align-items-center justify-content-start gap-3">
-                            <div className="flex-grow-1">
-                              <h6 className="mb-0">
-                                <a
-                                  href={course.url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="text-decoration-none fw-bold text-dark"
-                                  style={{ fontSize: '1rem' }}
-                                >
-                                  {course.name}
-                                </a>
-                              </h6>
-                            </div>
-                            {(!course.mandatory && !course.prerequest) && (
-                              <button
-                                className="btn btn-sm btn-outline-secondary"
-                                onClick={() => toggleLesson(course.id)}
-                              >
-                                {expandedLessons[course.id] ? '︿' : '﹀'}
-                              </button>
-                            )}
-                          </div>
-                          <div
-                            className={`collapse-content overflow-hidden px-3 text-start ${expandedLessons[course.id] ? 'expanded' : ''}`}
-                          >
-                            <div
-                              className="small text-muted mb-0"
-                              style={{
-                                whiteSpace: 'pre-line',
-                                maxHeight: '150px',
-                                overflowY: 'auto',
-                                paddingRight: '4px',
-                              }}
+                    <div key={title} className="mt-4 section-box" id={`${title}-section`}>
+                      <button className={`btn ${isExpanded ? 'btn-secondary text-white' : 'btn-light'} fw-bold d-flex justify-content-between align-items-center w-100 text-start`} onClick={() => toggleSection(title)}>
+                        <span><i className={`bi bi-${icon} me-2`} /> {title}</span>
+                        <span>{isExpanded ? '︿' : '﹀'}</span>
+                      </button>
+
+                      {isExpanded && title === 'Επιλεγόμενα Μαθήματα' && (
+                        <div className="d-flex flex-wrap my-3">
+                          {['Όλα', 'Ροή Λογισμικού και Πληροφοριακών Συστημάτων', 'Ροή Υλικού και Υπολογιστικών Συστημάτων', 'Ροή Δικτύων Υπολογιστών και Επικοινωνιών'].map(flowName => (
+                            <button
+                              key={flowName}
+                              className={`btn btn-sm me-2 mb-2 ${activeFlowTab === flowName ? 'btn-secondary text-white' : 'btn-light'}`}
+                              onClick={() => setActiveFlowTab(flowName)}
                             >
-                              {course.explanation}
-                            </div>
-                          </div>
+                              {flowName}
+                            </button>
+                          ))}
                         </div>
-                      ))}
+                      )}
+
+                      <AnimatePresence initial={false}>
+                        {isExpanded && (
+                          <motion.div
+                            key="content"
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.5, ease: 'easeInOut' }}
+                            style={{ overflow: 'hidden' }}
+                          >
+                            {recommendations
+                              .filter(filter)
+                              .filter(c => title !== 'Επιλεγόμενα Μαθήματα' || activeFlowTab === 'Όλα' || c.flow === activeFlowTab)
+                              .map(course => (
+                                <div className="card my-2 shadow-sm text-start" key={course.id}>
+                                  <div className="card-body d-flex align-items-center justify-content-start gap-3">
+                                    <div className="flex-grow-1">
+                                      <h6 className="mb-0">
+                                        <a
+                                          href={course.url}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="text-decoration-none fw-bold text-dark"
+                                          style={{ fontSize: '1rem' }}
+                                        >
+                                          {course.name}
+                                        </a>
+                                      </h6>
+                                    </div>
+                                    {title === 'Επιλεγόμενα Μαθήματα' && (
+                                      <button className="btn btn-sm btn-outline-secondary" onClick={() => toggleLesson(course.id)}>
+                                        {expandedLessons[course.id] ? '︿' : '﹀'}
+                                      </button>
+                                    )}
+                                  </div>
+                                  <div className={`collapse-content overflow-hidden px-3 text-start ${expandedLessons[course.id] ? 'expanded' : ''}`}>
+                                    <div className="small text-muted mb-0" style={{ whiteSpace: 'pre-line', maxHeight: '150px', overflowY: 'auto', paddingRight: '4px' }}>
+                                      {course.explanation}
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </div>
                   );
                 })}
@@ -276,24 +308,22 @@ function Questionnaire() {
               >
                 <h5>{currentQuestion.question}</h5>
                 <div className="mt-3 d-grid gap-2">
-                  {currentQuestion.answers
-                    .filter(ans => ans.answer !== null)
-                    .map((ans, index) => (
-                      <button
-                        key={index}
-                        className={`btn m-2 ${currentQuestion.type === 'multi'
-                          ? selectedAnswer.includes(ans.answer)
-                            ? 'btn-primary'
-                            : 'btn-outline-primary'
-                          : selectedAnswer === ans.answer
-                            ? 'btn-primary'
-                            : 'btn-outline-primary'
-                          }`}
-                        onClick={() => handleAnswerSelect(ans.answer)}
-                      >
-                        {ans.answer}
-                      </button>
-                    ))}
+                  {currentQuestion.answers.filter(ans => ans.answer !== null).map((ans, index) => (
+                    <button
+                      key={index}
+                      className={`btn m-2 ${currentQuestion.type === 'multi'
+                        ? selectedAnswer.includes(ans.answer)
+                          ? 'btn-primary'
+                          : 'btn-outline-primary'
+                        : selectedAnswer === ans.answer
+                          ? 'btn-primary'
+                          : 'btn-outline-primary'
+                        }`}
+                      onClick={() => handleAnswerSelect(ans.answer)}
+                    >
+                      {ans.answer}
+                    </button>
+                  ))}
                 </div>
                 <div className="next-btn-container mt-4 d-flex justify-content-center">
                   <button className="btn btn-success" onClick={handleNextClick}>
@@ -307,7 +337,6 @@ function Questionnaire() {
           <div className="d-flex justify-content-center">
             <p>Loading...</p>
           </div>
-
         )}
       </section>
     </div>
