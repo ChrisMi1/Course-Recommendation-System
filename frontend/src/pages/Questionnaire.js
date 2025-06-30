@@ -8,6 +8,16 @@ import jsPDF from 'jspdf';
 import RobotoRegular from '../assets/fonts/Roboto-Regular';
 import Spline from '@splinetool/react-spline';
 import Navbar from '../components/Navbar';
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+
+const InfoTooltip = ({ text }) => (
+  <OverlayTrigger
+    placement="right"
+    overlay={<Tooltip>{text}</Tooltip>}
+  >
+    <span className="ms-2 info-icon" role="button">ⓘ</span>
+  </OverlayTrigger>
+);
 
 
 function Questionnaire() {
@@ -23,6 +33,8 @@ function Questionnaire() {
   const [loadingRecommendations, setLoadingRecommendations] = useState(false);
   const [activeFlowTab, setActiveFlowTab] = useState('Όλα');
   const [expandedSections, setExpandedSections] = useState({});
+  const [errorMessage, setErrorMessage] = useState('');
+
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -60,9 +72,11 @@ function Questionnaire() {
 
   const handleNextClick = () => {
     if (!selectedAnswer || (Array.isArray(selectedAnswer) && selectedAnswer.length === 0)) {
-      alert('Please select at least one answer first.');
+      setErrorMessage('Παρακαλώ επιλέξτε τουλάχιστον μία απάντηση.');
       return;
     }
+
+    setErrorMessage('');
 
     const answerToSave = Array.isArray(selectedAnswer)
       ? selectedAnswer.join('|')
@@ -226,7 +240,20 @@ function Questionnaire() {
                   return (
                     <div key={title} className="mt-4 section-box" id={`${title}-section`}>
                       <button className={`btn ${isExpanded ? 'btn-secondary text-white' : 'btn-light'} fw-bold d-flex justify-content-between align-items-center w-100 text-start`} onClick={() => toggleSection(title)}>
-                        <span><i className={`bi bi-${icon} me-2`} /> {title}</span>
+                        <span className="d-flex align-items-center gap-1">
+                          <i className={`bi bi-${icon}`} />
+                          {title}
+                          {title === 'Επιλεγόμενα Μαθήματα' && (
+                            <InfoTooltip text="Μαθήματα που προτάθηκαν βάσει των ενδιαφερόντων σου." />
+                          )}
+                          {title === 'Βασικής Ροής Μαθήματα' && (
+                            <InfoTooltip text="Υποχρεωτικά μαθήματα που σχετίζονται με την κατεύθυνσή σου." />
+                          )}
+                          {title === 'Προαπαιτούμενα Μαθήματα' && (
+                            <InfoTooltip text="Βασικά μαθήματα που προτείνονται βάσει των αδυναμιών σου για ενίσχυση." />
+                          )}
+                        </span>
+
                         <span>{isExpanded ? '︿' : '﹀'}</span>
                       </button>
 
@@ -306,6 +333,17 @@ function Questionnaire() {
                 transition={{ duration: 0.4 }}
                 className="card p-4 shadow mb-4 question-card"
               >
+                {errorMessage && (
+                  <div className="alert alert-warning alert-dismissible fade show" role="alert">
+                    {errorMessage}
+                    <button
+                      type="button"
+                      className="btn-close"
+                      onClick={() => setErrorMessage('')}
+                      aria-label="Close"
+                    ></button>
+                  </div>
+                )}
                 <h5>{currentQuestion.question}</h5>
                 <div className="mt-3 d-grid gap-2">
                   {currentQuestion.answers.filter(ans => ans.answer !== null).map((ans, index) => (

@@ -269,3 +269,12 @@ html, body, #root {
   cursor: pointer;
 }
 
+.info-icon {
+  color: #555;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 1rem;
+}
+.info-icon:hover {
+  color: #007bff;
+}
