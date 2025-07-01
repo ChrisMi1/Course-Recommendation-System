@@ -172,18 +172,72 @@ function Questionnaire() {
     doc.addFileToVFS("Roboto-Regular.ttf", RobotoRegular);
     doc.addFont("Roboto-Regular.ttf", "Roboto", "normal");
     doc.setFont("Roboto");
-    doc.setFontSize(16);
-    doc.addImage(logo, 'PNG', 55, 40, 100, 100);
-    doc.text("Recommended Lessons", 10, 10);
-    recommendations.forEach((course, index) => {
-      const y = 20 + index * 15;
-      doc.setFontSize(14);
-      doc.text(`${index + 1}. ${course.name}`, 10, y);
-      doc.setFontSize(11);
-      doc.text(`URL: ${course.url}`, 12, y + 6);
+
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+
+    let y = 20;
+
+    const drawLogoBackground = () => {
+      doc.addImage(logo, 'PNG', (pageWidth - 100) / 2, (pageHeight - 100) / 2, 100, 100, '', 'FAST', 0.1);
+    };
+
+    drawLogoBackground(); // First page
+
+    doc.setFontSize(18);
+    doc.text("Προτεινόμενα Μαθήματα", 10, y);
+    y += 10;
+
+    const sections = [
+      {
+        title: 'Επιλεγόμενα Μαθήματα',
+        filter: c => !c.mandatory && !c.prerequest,
+      },
+      {
+        title: 'Βασικής Ροής Μαθήματα',
+        filter: c => c.mandatory,
+      },
+      {
+        title: 'Προαπαιτούμενα Μαθήματα',
+        filter: c => c.prerequest,
+      }
+    ];
+
+    sections.forEach(section => {
+      const courses = recommendations.filter(section.filter);
+      if (courses.length === 0) return;
+
+      if (y > 260) {
+        doc.addPage();
+        drawLogoBackground();
+        y = 20;
+      }
+
+      doc.setFontSize(15);
+      doc.text(section.title, 10, y);
+      y += 8;
+
+      courses.forEach(course => {
+        if (y > 270) {
+          doc.addPage();
+          drawLogoBackground();
+          y = 20;
+        }
+
+        doc.setFontSize(13);
+        doc.text(`• ${course.name}`, 12, y);
+        y += 5;
+
+        doc.setFontSize(10);
+        doc.text(`URL: ${course.url}`, 14, y);
+        y += 6;
+      });
     });
+
     doc.save('recommended-lessons.pdf');
   };
+
+
 
   return (
     <div className="full-blur-wrapper">
@@ -344,7 +398,13 @@ function Questionnaire() {
                     ></button>
                   </div>
                 )}
-                <h5>{currentQuestion.question}</h5>
+                <h5 className="mb-0">
+                  {currentQuestion.question}
+                  <span className="text-muted small ms-2">
+                    ({currentQuestion.type === 'multi' ? 'πολλαπλή επιλογή' : 'μονή επιλογή'})
+                  </span>
+                </h5>
+
                 <div className="mt-3 d-grid gap-2">
                   {currentQuestion.answers.filter(ans => ans.answer !== null).map((ans, index) => (
                     <button
